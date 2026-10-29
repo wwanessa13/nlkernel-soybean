@@ -1,0 +1,362 @@
+---
+title: "Data Preparation"
+format: html
+execute:
+  eval: false
+editor: visual
+---
+
+## Cross-validation schemes
+
+```{r}
+Y <- read.table('data.txt', header = TRUE) %>%
+  select(strain, environ, yield, protein, oil)
+
+IDs <- Y$strain
+uIDs <- unique(IDs)
+
+env <- Y$environ
+uenv <- unique(env)
+```
+
+CV1: To predict untested genotypes in observed environments.
+
+```{r}
+folds <- 5
+
+fold <- rep(1:folds, each = ceiling(length(uIDs) / folds))[order(runif(length(uIDs)))]
+
+Y$CV1 <- NA
+
+for(i in 1:folds) {
+  tmp <- IDs %in% uIDs[fold == i]
+  Y$CV1[tmp] <- i
+}
+
+table(Y$CV1)
+```
+
+CV2: To predict tested genotypes in observed environments.
+
+```{r}
+folds <- 5
+
+Y$CV2 <- NA
+
+for(i in uIDs) {
+  tmp <- which(IDs == i)
+  ni  <- length(tmp)
+  fold <- sample(1:folds, size = ni, replace = ni > folds)
+  Y$CV2[tmp] <- fold
+}
+
+table(Y$CV2)
+```
+
+CV0: To predict tested genotypes in unobserved environments.
+
+```{r}
+folds_env <- length(uenv)
+
+fold <- sample(1:folds_env, size = folds_env)
+
+Y$CV0 <- NA
+
+for(i in 1:folds_env) {
+  tmp <- env %in% uenv[fold == i]
+  Y$CV0[tmp] <- i
+}
+
+table(Y$CV0)
+```
+
+```{r}
+writexl::write_xlsx(Y, "Y_CV.xlsx")
+```
+
+The saved file was used for hyperparameter tuning. The same code was then rerun with different random seeds to test the models under five independent data partitions for CV1 and CV2.
+
+## Environment
+
+```{r}
+env <- read.table('data.txt', header = TRUE) %>% pull(environ)
+
+env <- factor(env, levels = unique(env))
+```
+
+Fixed effect - Incidence matrix
+
+```{r}
+EZ <- as.matrix(model.matrix(~env - 1))
+
+rownames(EZ) <- 1:length(env)
+
+colnames(EZ) <- levels(env)
+
+save(EZ, file = 'EZ.rda') 
+```
+
+Random effect (for interaction GxE)
+
+```{r}
+E <- EZ %*% t(EZ)
+
+rownames(E) <- 1:nrow(EZ)
+
+colnames(E) <- 1:nrow(EZ)
+
+save(E, file = 'E.rda')
+```
+
+## G matrix
+
+The genomic relationship matrix represent genetic similarity among individuals based on genome-wide molecular markers.
+
+Genotypes x Markers
+
+```{r}
+SNPs <- as.matrix(read.table("gen.txt", h = T, sep = "," ))
+```
+
+The G matrix provided from non linear kernels build here, show the best hyperparameters after tunning.
+
+To optimizing the computational process, we decomposed the G matrix of all models to avoid recalculating the eigenvalues and eigenvectors at each MCMC iteration.
+
+### GBLUP
+
+Genotypes x Genotypes
+
+```{r}
+library(AGHmatrix)
+
+Gn <- Gmatrix(SNPmatrix = SNPs, maf = 0.05, missingValue = -9, method = "VanRaden")
+```
+
+Fixed effect - Incidence matrix
+
+```{r}
+IDs <- read.table('data.txt', header = TRUE) %>% pull(strain)
+
+IDs <- factor(IDs, levels = rownames(Gn))
+
+GZ <- as.matrix(model.matrix(~IDs - 1))
+```
+
+Random effect - Observations × Observations
+
+```{r}
+G <- GZ %*% Gn %*% t(GZ)
+
+save(G, file = 'G.rda') # For GxE interaction
+
+GDec <- eigen(G)
+
+rownames(GDec$vectors) <- rownames(G)
+
+save(GDec, file = 'GDec.rda')
+```
+
+### Laplace
+
+Genotypes x Genotypes
+
+```{r}
+Gn <- kernlab::kernelMatrix(laplacedot(sigma = 0.001), SNPs)
+```
+
+Fixed effect - Incidence matrix
+
+```{r}
+IDs <- read.table('data.txt', header = TRUE) %>% pull(strain)
+
+IDs <- factor(IDs, levels = rownames(Gn))
+
+GZ <- as.matrix(model.matrix(~IDs - 1))
+```
+
+Random effect - Observations × Observations
+
+```{r}
+G <- GZ %*% Gn %*% t(GZ)
+
+save(G, file = 'G_lpc.rda') # For GxE interaction
+
+GDec <- eigen(G)
+
+rownames(GDec$vectors) <- rownames(G)
+
+save(GDec, file = 'GDec_lpc.rda')
+```
+
+### Polynomial
+
+Genotypes x Genotypes
+
+```{r}
+Gn <- kernlab::kernelMatrix(polydot(degree = 2, offset = 1, scale = 1), SNPs)
+```
+
+Fixed effect - Incidence matrix
+
+```{r}
+IDs <- read.table('data.txt', header = TRUE) %>% pull(strain)
+
+IDs <- factor(IDs, levels = rownames(Gn))
+
+GZ <- as.matrix(model.matrix(~IDs - 1))
+```
+
+Random effect - Observations × Observations
+
+```{r}
+G <- GZ %*% Gn %*% t(GZ)
+
+save(G, file = 'G_poly.rda') # For GxE interaction
+
+GDec <- eigen(G)
+
+rownames(GDec$vectors) <- rownames(G)
+
+save(GDec, file = 'GDec_poly.rda')
+```
+
+### Bessel
+
+Genotypes x Genotypes
+
+```{r}
+Gn <- kernlab::kernelMatrix(besseldot(sigma = 0.01, order = 0, degree = 2), SNPs)
+```
+
+Fixed effect - Incidence matrix
+
+```{r}
+IDs <- read.table('data.txt', header = TRUE) %>% pull(strain)
+
+IDs <- factor(IDs, levels = rownames(Gn))
+
+GZ <- as.matrix(model.matrix(~IDs - 1))
+```
+
+Random effect - Observations × Observations
+
+```{r}
+G <- GZ %*% Gn %*% t(GZ)
+
+save(G, file = 'G_bsl.rda') # For GxE interaction
+
+GDec <- eigen(G)
+
+rownames(GDec$vectors) <- rownames(G)
+
+save(GDec, file = 'GDec_bsl.rda')
+```
+
+### Gaussian
+
+Genotypes x Genotypes
+
+```{r}
+Gn <- kernlab::kernelMatrix(rbfdot(sigma = 0.0001), SNPs)
+```
+
+Fixed effect - Incidence matrix
+
+```{r}
+IDs <- read.table('data.txt', header = TRUE) %>% pull(strain)
+
+IDs <- factor(IDs, levels = rownames(Gn))
+
+GZ <- as.matrix(model.matrix(~IDs - 1))
+```
+
+Random effect - Observations × Observations
+
+```{r}
+G <- GZ %*% Gn %*% t(GZ)
+
+save(G, file = 'G_gauss.rda') # For GxE interaction
+
+GDec <- eigen(G)
+
+rownames(GDec$vectors) <- rownames(G)
+
+save(GDec, file = 'GDec_gauss.rda')
+```
+
+## GxE matrix
+
+### GBLUP
+
+```{r}
+load('E.rda')
+load('G.rda')
+
+GxE <- G*E
+
+GxEDec <- eigen(GxE)
+
+rownames(GxEDec$vectors) <- rownames(GxE)
+
+save(GxEDec, file = 'GxEDec.rda') 
+```
+
+### Laplace
+
+```{r}
+load('E.rda')
+load('G_lpc.rda')
+
+GxE <- G*E
+
+GxEDec <- eigen(GxE)
+
+rownames(GxEDec$vectors) <- rownames(GxE)
+
+save(GxEDec, file = 'GxEDec_lpc.rda') 
+```
+
+### Polynomial
+
+```{r}
+load('E.rda')
+load('G_poly.rda')
+
+GxE <- G*E
+
+GxEDec <- eigen(GxE)
+
+rownames(GxEDec$vectors) <- rownames(GxE)
+
+save(GxEDec, file = 'GxEDec_poly.rda') 
+```
+
+### Bessel
+
+```{r}
+load('E.rda')
+load('G_bsl.rda')
+
+GxE <- G*E
+
+GxEDec <- eigen(GxE)
+
+rownames(GxEDec$vectors) <- rownames(GxE)
+
+save(GxEDec, file = 'GxEDec_bsl.rda') 
+```
+
+### Gaussian
+
+```{r}
+load('E.rda')
+load('G_gauss.rda')
+
+GxE <- G*E
+
+GxEDec <- eigen(GxE)
+
+rownames(GxEDec$vectors) <- rownames(GxE)
+
+save(GxEDec, file = 'GxEDec_gauss.rda')
+```

@@ -1,0 +1,2258 @@
+---
+title: "Additional Dataset"
+format: html
+execute:
+  eval: false
+editor: visual
+---
+
+# Data and packages
+
+```{r}
+library(tidyverse)
+library(BGLR)
+library(kernlab)
+
+SNPs <- as.matrix(read.table("gen.txt"))
+SNPs <- t(SNPs)
+```
+
+# GBLUP
+
+```{r}
+library(AGHmatrix)
+
+Kmat <- Gmatrix(SNPmatrix = SNPs, method = "VanRaden")
+```
+
+## 8
+
+```{r}
+y <- read.table("fen.txt") %>% pull(V1)
+n <- length(y)
+
+set.seed(123) 
+folds <- sample(rep(1:5, length.out = n))
+
+acc_folds <- numeric(5)
+predict_list <- list()
+
+for (f in 1:5) {
+  cat("\n Fold Processing", f, "\n")
+  
+  idx_test  <- which(folds == f)
+
+  y_na <- y
+  y_na[idx_test] <- NA
+  
+  ETA <- list(list(K = Kmat, model = "RKHS"))
+  
+  fit <- BGLR(
+    y = y_na,
+    ETA = ETA,
+    nIter = 20000,   
+    burnIn = 5000, 
+    thin = 10,
+    verbose = FALSE
+  )
+  
+  yhat_test <- fit$yHat[idx_test]
+  
+  acc_folds[f] <- cor(yhat_test, y[idx_test], use = "complete.obs")
+  
+  predict_list[[f]] <- data.frame(
+    Fold = f,
+    Genotype = idx_test,
+    Observed = y[idx_test],
+    Predicted = yhat_test
+  )
+}
+
+final_results <- do.call(rbind, predict_list)
+final_results
+
+results <- data.frame(
+  Model = "GBLUP",
+  Mean_Accuracy = mean(acc_folds),
+  SD_Accuracy = sd(acc_folds)
+)
+
+results
+
+writexl::write_xlsx(results, "8GBLUP.xlsx")
+```
+
+## 40
+
+```{r}
+y <- read.table("fen.txt") %>% pull(V2)
+n <- length(y)
+
+set.seed(123) 
+folds <- sample(rep(1:5, length.out = n))
+
+acc_folds <- numeric(5)
+predict_list <- list()
+
+for (f in 1:5) {
+  cat("\n Fold Processing", f, "\n")
+  
+  idx_test  <- which(folds == f)
+
+  y_na <- y
+  y_na[idx_test] <- NA
+  
+  ETA <- list(list(K = Kmat, model = "RKHS"))
+  
+  fit <- BGLR(
+    y = y_na,
+    ETA = ETA,
+    nIter = 20000,   
+    burnIn = 5000, 
+    thin = 10,
+    verbose = FALSE
+  )
+  
+  yhat_test <- fit$yHat[idx_test]
+  
+  acc_folds[f] <- cor(yhat_test, y[idx_test], use = "complete.obs")
+  
+  predict_list[[f]] <- data.frame(
+    Fold = f,
+    Genotype = idx_test,
+    Observed = y[idx_test],
+    Predicted = yhat_test
+  )
+}
+
+final_results <- do.call(rbind, predict_list)
+final_results
+
+results <- data.frame(
+  Model = "GBLUP",
+  Mean_Accuracy = mean(acc_folds),
+  SD_Accuracy = sd(acc_folds)
+)
+
+results
+
+writexl::write_xlsx(results, "40GBLUP.xlsx")
+```
+
+## 80
+
+```{r}
+y <- read.table("fen.txt") %>% pull(V3)
+n <- length(y)
+
+set.seed(123) 
+folds <- sample(rep(1:5, length.out = n))
+
+acc_folds <- numeric(5)
+predict_list <- list()
+
+for (f in 1:5) {
+  cat("\n Fold Processing", f, "\n")
+  
+  idx_test  <- which(folds == f)
+
+  y_na <- y
+  y_na[idx_test] <- NA
+  
+  ETA <- list(list(K = Kmat, model = "RKHS"))
+  
+  fit <- BGLR(
+    y = y_na,
+    ETA = ETA,
+    nIter = 20000,   
+    burnIn = 5000, 
+    thin = 10,
+    verbose = FALSE
+  )
+  
+  yhat_test <- fit$yHat[idx_test]
+  
+  acc_folds[f] <- cor(yhat_test, y[idx_test], use = "complete.obs")
+  
+  predict_list[[f]] <- data.frame(
+    Fold = f,
+    Genotype = idx_test,
+    Observed = y[idx_test],
+    Predicted = yhat_test
+  )
+}
+
+final_results <- do.call(rbind, predict_list)
+final_results
+
+results <- data.frame(
+  Model = "GBLUP",
+  Mean_Accuracy = mean(acc_folds),
+  SD_Accuracy = sd(acc_folds)
+)
+
+results
+
+writexl::write_xlsx(results, "80GBLUP.xlsx")
+```
+
+## 120
+
+```{r}
+y <- read.table("fen.txt") %>% pull(V4)
+n <- length(y)
+
+set.seed(123) 
+folds <- sample(rep(1:5, length.out = n))
+
+acc_folds <- numeric(5)
+predict_list <- list()
+
+for (f in 1:5) {
+  cat("\n Fold Processing", f, "\n")
+  
+  idx_test  <- which(folds == f)
+
+  y_na <- y
+  y_na[idx_test] <- NA
+  
+  ETA <- list(list(K = Kmat, model = "RKHS"))
+  
+  fit <- BGLR(
+    y = y_na,
+    ETA = ETA,
+    nIter = 20000,   
+    burnIn = 5000, 
+    thin = 10,
+    verbose = FALSE
+  )
+  
+  yhat_test <- fit$yHat[idx_test]
+  
+  acc_folds[f] <- cor(yhat_test, y[idx_test], use = "complete.obs")
+  
+  predict_list[[f]] <- data.frame(
+    Fold = f,
+    Genotype = idx_test,
+    Observed = y[idx_test],
+    Predicted = yhat_test
+  )
+}
+
+final_results <- do.call(rbind, predict_list)
+final_results
+
+results <- data.frame(
+  Model = "GBLUP",
+  Mean_Accuracy = mean(acc_folds),
+  SD_Accuracy = sd(acc_folds)
+)
+
+results
+
+writexl::write_xlsx(results, "120GBLUP.xlsx")
+```
+
+## 240
+
+```{r}
+y <- read.table("fen.txt") %>% pull(V5)
+n <- length(y)
+
+set.seed(123) 
+folds <- sample(rep(1:5, length.out = n))
+
+acc_folds <- numeric(5)
+predict_list <- list()
+
+for (f in 1:5) {
+  cat("\n Fold Processing", f, "\n")
+  
+  idx_test  <- which(folds == f)
+
+  y_na <- y
+  y_na[idx_test] <- NA
+  
+  ETA <- list(list(K = Kmat, model = "RKHS"))
+  
+  fit <- BGLR(
+    y = y_na,
+    ETA = ETA,
+    nIter = 20000,   
+    burnIn = 5000, 
+    thin = 10,
+    verbose = FALSE
+  )
+  
+  yhat_test <- fit$yHat[idx_test]
+  
+  acc_folds[f] <- cor(yhat_test, y[idx_test], use = "complete.obs")
+  
+  predict_list[[f]] <- data.frame(
+    Fold = f,
+    Genotype = idx_test,
+    Observed = y[idx_test],
+    Predicted = yhat_test
+  )
+}
+
+final_results <- do.call(rbind, predict_list)
+final_results
+
+results <- data.frame(
+  Model = "GBLUP",
+  Mean_Accuracy = mean(acc_folds),
+  SD_Accuracy = sd(acc_folds)
+)
+
+results
+
+writexl::write_xlsx(results, "240GBLUP.xlsx")
+```
+
+## 480
+
+```{r}
+y <- read.table("fen.txt") %>% pull(V6)
+n <- length(y)
+
+set.seed(123) 
+folds <- sample(rep(1:5, length.out = n))
+
+acc_folds <- numeric(5)
+predict_list <- list()
+
+for (f in 1:5) {
+  cat("\n Fold Processing", f, "\n")
+  
+  idx_test  <- which(folds == f)
+
+  y_na <- y
+  y_na[idx_test] <- NA
+  
+  ETA <- list(list(K = Kmat, model = "RKHS"))
+  
+  fit <- BGLR(
+    y = y_na,
+    ETA = ETA,
+    nIter = 20000,   
+    burnIn = 5000, 
+    thin = 10,
+    verbose = FALSE
+  )
+  
+  yhat_test <- fit$yHat[idx_test]
+  
+  acc_folds[f] <- cor(yhat_test, y[idx_test], use = "complete.obs")
+  
+  predict_list[[f]] <- data.frame(
+    Fold = f,
+    Genotype = idx_test,
+    Observed = y[idx_test],
+    Predicted = yhat_test
+  )
+}
+
+final_results <- do.call(rbind, predict_list)
+final_results
+
+results <- data.frame(
+  Model = "GBLUP",
+  Mean_Accuracy = mean(acc_folds),
+  SD_Accuracy = sd(acc_folds)
+)
+
+results
+
+writexl::write_xlsx(results, "480GBLUP.xlsx")
+```
+
+# Laplacian
+
+```{r}
+Kmat0.001 <- kernelMatrix(laplacedot(sigma = 0.001), SNPs)
+Kmat0.01 <- kernelMatrix(laplacedot(sigma = 0.01), SNPs)
+Kmat0.05 <- kernelMatrix(laplacedot(sigma = 0.05), SNPs)
+Kmat0.1 <- kernelMatrix(laplacedot(sigma = 0.1), SNPs)
+
+sg <- list(
+  sigma0.1 = Kmat0.1,
+  sigma0.05 = Kmat0.05,
+  sigma0.01 = Kmat0.01,
+  sigma0.001 = Kmat0.001
+)
+```
+
+## 8
+
+```{r}
+y <- read.table("fen.txt") %>% pull(V1)
+n <- length(y)
+
+set.seed(123)
+folds <- sample(rep(1:5, length.out = n))
+
+results <- data.frame()
+predicoes  <- list()
+
+for (name_Model in names(sg)) {
+  
+  cat("\nProcessando Model:", name_Model, "\n")
+  
+  Kmat <- sg[[name_Model]]
+  
+  acc_folds <- numeric(5)
+  predict_list <- list()
+  
+  for (f in 1:5) {
+    
+    cat("  Fold", f, "\n")
+    
+    idx_test <- which(folds == f)
+    
+    y_na <- y
+    y_na[idx_test] <- NA
+    
+    ETA <- list(list(K = Kmat, model = "RKHS"))
+    
+    fit <- BGLR(
+      y = y_na,
+      ETA = ETA,
+      nIter = 20000,
+      burnIn = 5000,
+      thin = 10,
+      verbose = FALSE
+    )
+    
+    yhat_test <- fit$yHat[idx_test]
+    
+    acc_folds[f] <- cor(yhat_test, y[idx_test], use = "complete.obs")
+    
+    predict_list[[f]] <- data.frame(
+      Model    = name_Model,
+      Fold      = f,
+      Genotype = idx_test,
+      Observed = y[idx_test],
+      Predicted   = yhat_test
+    )
+  }
+  
+  predicoes[[name_Model]] <- do.call(rbind, predict_list)
+  
+  results <- rbind(
+    results,
+    data.frame(
+      Model         = name_Model,
+      Mean_Accuracy = mean(acc_folds),
+      SD_Accuracy    = sd(acc_folds)
+    )
+  )
+}
+
+results <- results[order(-results$Mean_Accuracy), ]
+
+print(results)
+
+writexl::write_xlsx(results, "8LPC.xlsx")
+```
+
+## 40
+
+```{r}
+y <- read.table("fen.txt") %>% pull(V2)
+n <- length(y)
+
+set.seed(123)
+folds <- sample(rep(1:5, length.out = n))
+
+results <- data.frame()
+predicoes  <- list()
+
+for (name_Model in names(sg)) {
+  
+  cat("\nProcessando Model:", name_Model, "\n")
+  
+  Kmat <- sg[[name_Model]]
+  
+  acc_folds <- numeric(5)
+  predict_list <- list()
+  
+  for (f in 1:5) {
+    
+    cat("  Fold", f, "\n")
+    
+    idx_test <- which(folds == f)
+    
+    y_na <- y
+    y_na[idx_test] <- NA
+    
+    ETA <- list(list(K = Kmat, model = "RKHS"))
+    
+    fit <- BGLR(
+      y = y_na,
+      ETA = ETA,
+      nIter = 20000,
+      burnIn = 5000,
+      thin = 10,
+      verbose = FALSE
+    )
+    
+    yhat_test <- fit$yHat[idx_test]
+    
+    acc_folds[f] <- cor(yhat_test, y[idx_test], use = "complete.obs")
+    
+    predict_list[[f]] <- data.frame(
+      Model    = name_Model,
+      Fold      = f,
+      Genotype = idx_test,
+      Observed = y[idx_test],
+      Predicted   = yhat_test
+    )
+  }
+  
+  predicoes[[name_Model]] <- do.call(rbind, predict_list)
+  
+  results <- rbind(
+    results,
+    data.frame(
+      Model         = name_Model,
+      Mean_Accuracy = mean(acc_folds),
+      SD_Accuracy    = sd(acc_folds)
+    )
+  )
+}
+
+results <- results[order(-results$Mean_Accuracy), ]
+
+print(results)
+
+writexl::write_xlsx(results, "40LPC.xlsx")
+```
+
+## 80
+
+```{r}
+y <- read.table("fen.txt") %>% pull(V3)
+n <- length(y)
+
+set.seed(123)
+folds <- sample(rep(1:5, length.out = n))
+
+results <- data.frame()
+predicoes  <- list()
+
+for (name_Model in names(sg)) {
+  
+  cat("\nProcessando Model:", name_Model, "\n")
+  
+  Kmat <- sg[[name_Model]]
+  
+  acc_folds <- numeric(5)
+  predict_list <- list()
+  
+  for (f in 1:5) {
+    
+    cat("  Fold", f, "\n")
+    
+    idx_test <- which(folds == f)
+    
+    y_na <- y
+    y_na[idx_test] <- NA
+    
+    ETA <- list(list(K = Kmat, model = "RKHS"))
+    
+    fit <- BGLR(
+      y = y_na,
+      ETA = ETA,
+      nIter = 20000,
+      burnIn = 5000,
+      thin = 10,
+      verbose = FALSE
+    )
+    
+    yhat_test <- fit$yHat[idx_test]
+    
+    acc_folds[f] <- cor(yhat_test, y[idx_test], use = "complete.obs")
+    
+    predict_list[[f]] <- data.frame(
+      Model    = name_Model,
+      Fold      = f,
+      Genotype = idx_test,
+      Observed = y[idx_test],
+      Predicted   = yhat_test
+    )
+  }
+  
+  predicoes[[name_Model]] <- do.call(rbind, predict_list)
+  
+  results <- rbind(
+    results,
+    data.frame(
+      Model         = name_Model,
+      Mean_Accuracy = mean(acc_folds),
+      SD_Accuracy    = sd(acc_folds)
+    )
+  )
+}
+
+results <- results[order(-results$Mean_Accuracy), ]
+
+print(results)
+
+writexl::write_xlsx(results, "80LPC.xlsx")
+```
+
+## 120
+
+```{r}
+y <- read.table("fen.txt") %>% pull(V4)
+n <- length(y)
+
+set.seed(123)
+folds <- sample(rep(1:5, length.out = n))
+
+results <- data.frame()
+predicoes  <- list()
+
+for (name_Model in names(sg)) {
+  
+  cat("\nProcessando Model:", name_Model, "\n")
+  
+  Kmat <- sg[[name_Model]]
+  
+  acc_folds <- numeric(5)
+  predict_list <- list()
+  
+  for (f in 1:5) {
+    
+    cat("  Fold", f, "\n")
+    
+    idx_test <- which(folds == f)
+    
+    y_na <- y
+    y_na[idx_test] <- NA
+    
+    ETA <- list(list(K = Kmat, model = "RKHS"))
+    
+    fit <- BGLR(
+      y = y_na,
+      ETA = ETA,
+      nIter = 20000,
+      burnIn = 5000,
+      thin = 10,
+      verbose = FALSE
+    )
+    
+    yhat_test <- fit$yHat[idx_test]
+    
+    acc_folds[f] <- cor(yhat_test, y[idx_test], use = "complete.obs")
+    
+    predict_list[[f]] <- data.frame(
+      Model    = name_Model,
+      Fold      = f,
+      Genotype = idx_test,
+      Observed = y[idx_test],
+      Predicted   = yhat_test
+    )
+  }
+  
+  predicoes[[name_Model]] <- do.call(rbind, predict_list)
+  
+  results <- rbind(
+    results,
+    data.frame(
+      Model         = name_Model,
+      Mean_Accuracy = mean(acc_folds),
+      SD_Accuracy    = sd(acc_folds)
+    )
+  )
+}
+
+results <- results[order(-results$Mean_Accuracy), ]
+
+print(results)
+
+writexl::write_xlsx(results, "120LPC.xlsx")
+```
+
+## 240
+
+```{r}
+y <- read.table("fen.txt") %>% pull(V5)
+n <- length(y)
+
+set.seed(123)
+folds <- sample(rep(1:5, length.out = n))
+
+results <- data.frame()
+predicoes  <- list()
+
+for (name_Model in names(sg)) {
+  
+  cat("\nProcessando Model:", name_Model, "\n")
+  
+  Kmat <- sg[[name_Model]]
+  
+  acc_folds <- numeric(5)
+  predict_list <- list()
+  
+  for (f in 1:5) {
+    
+    cat("  Fold", f, "\n")
+    
+    idx_test <- which(folds == f)
+    
+    y_na <- y
+    y_na[idx_test] <- NA
+    
+    ETA <- list(list(K = Kmat, model = "RKHS"))
+    
+    fit <- BGLR(
+      y = y_na,
+      ETA = ETA,
+      nIter = 20000,
+      burnIn = 5000,
+      thin = 10,
+      verbose = FALSE
+    )
+    
+    yhat_test <- fit$yHat[idx_test]
+    
+    acc_folds[f] <- cor(yhat_test, y[idx_test], use = "complete.obs")
+    
+    predict_list[[f]] <- data.frame(
+      Model    = name_Model,
+      Fold      = f,
+      Genotype = idx_test,
+      Observed = y[idx_test],
+      Predicted   = yhat_test
+    )
+  }
+  
+  predicoes[[name_Model]] <- do.call(rbind, predict_list)
+  
+  results <- rbind(
+    results,
+    data.frame(
+      Model         = name_Model,
+      Mean_Accuracy = mean(acc_folds),
+      SD_Accuracy    = sd(acc_folds)
+    )
+  )
+}
+
+results <- results[order(-results$Mean_Accuracy), ]
+
+print(results)
+
+writexl::write_xlsx(results, "240LPC.xlsx")
+```
+
+## 480
+
+```{r}
+y <- read.table("fen.txt") %>% pull(V6)
+n <- length(y)
+
+set.seed(123)
+folds <- sample(rep(1:5, length.out = n))
+
+results <- data.frame()
+predicoes  <- list()
+
+for (name_Model in names(sg)) {
+  
+  cat("\nProcessando Model:", name_Model, "\n")
+  
+  Kmat <- sg[[name_Model]]
+  
+  acc_folds <- numeric(5)
+  predict_list <- list()
+  
+  for (f in 1:5) {
+    
+    cat("  Fold", f, "\n")
+    
+    idx_test <- which(folds == f)
+    
+    y_na <- y
+    y_na[idx_test] <- NA
+    
+    ETA <- list(list(K = Kmat, model = "RKHS"))
+    
+    fit <- BGLR(
+      y = y_na,
+      ETA = ETA,
+      nIter = 20000,
+      burnIn = 5000,
+      thin = 10,
+      verbose = FALSE
+    )
+    
+    yhat_test <- fit$yHat[idx_test]
+    
+    acc_folds[f] <- cor(yhat_test, y[idx_test], use = "complete.obs")
+    
+    predict_list[[f]] <- data.frame(
+      Model    = name_Model,
+      Fold      = f,
+      Genotype = idx_test,
+      Observed = y[idx_test],
+      Predicted   = yhat_test
+    )
+  }
+  
+  predicoes[[name_Model]] <- do.call(rbind, predict_list)
+  
+  results <- rbind(
+    results,
+    data.frame(
+      Model         = name_Model,
+      Mean_Accuracy = mean(acc_folds),
+      SD_Accuracy    = sd(acc_folds)
+    )
+  )
+}
+
+results <- results[order(-results$Mean_Accuracy), ]
+
+print(results)
+
+writexl::write_xlsx(results, "480LPC.xlsx")
+```
+
+
+# Bessel
+
+```{r}
+sg  <- c(0.1, 0.5, 1)
+ord  <- c(0, 1, 2)
+dg <- c(2, 3)
+
+hyper <- list()
+
+for (i in sg) {
+  for (j in ord) {
+    for (l in dg) {
+      Kmat <- kernelMatrix(besseldot(sigma = i, 
+                                     order = j, 
+                                     degree = l), 
+                           SNPs)
+      hyper[[paste0("sigma", i, "order", j, "degree", l)]] <- Kmat
+    }
+  }
+}
+```
+
+## 8
+
+```{r}
+y <- read.table("fen.txt") %>% pull(V1)
+n <- length(y)
+
+set.seed(123)
+folds <- sample(rep(1:5, length.out = n))
+
+results <- data.frame()
+predicoes  <- list()
+
+for (name_Model in names(hyper)) {
+  
+  cat("\nProcessando Model:", name_Model, "\n")
+  
+  Kmat <- hyper[[name_Model]]
+  
+  acc_folds <- numeric(5)
+  predict_list <- list()
+  
+  for (f in 1:5) {
+    
+    cat("  Fold", f, "\n")
+    
+    idx_test <- which(folds == f)
+    
+    y_na <- y
+    y_na[idx_test] <- NA
+    
+    ETA <- list(list(K = Kmat, model = "RKHS"))
+    
+    fit <- BGLR(
+      y = y_na,
+      ETA = ETA,
+      nIter = 20000,
+      burnIn = 5000,
+      thin = 10,
+      verbose = FALSE
+    )
+    
+    yhat_test <- fit$yHat[idx_test]
+    
+    acc_folds[f] <- cor(yhat_test, y[idx_test], use = "complete.obs")
+    
+    predict_list[[f]] <- data.frame(
+      Model    = name_Model,
+      Fold      = f,
+      Genotype = idx_test,
+      Observed = y[idx_test],
+      Predicted   = yhat_test
+    )
+  }
+  
+  predicoes[[name_Model]] <- do.call(rbind, predict_list)
+  
+  results <- rbind(
+    results,
+    data.frame(
+      Model         = name_Model,
+      Mean_Accuracy = mean(acc_folds),
+      SD_Accuracy    = sd(acc_folds)
+    )
+  )
+}
+
+results <- results[order(-results$Mean_Accuracy), ]
+
+print(results)
+
+writexl::write_xlsx(results, "8BSL.xlsx")
+```
+
+## 40
+
+```{r}
+y <- read.table("fen.txt") %>% pull(V2)
+n <- length(y)
+
+set.seed(123)
+folds <- sample(rep(1:5, length.out = n))
+
+results <- data.frame()
+predicoes  <- list()
+
+for (name_Model in names(hyper)) {
+  
+  cat("\nProcessando Model:", name_Model, "\n")
+  
+  Kmat <- hyper[[name_Model]]
+  
+  acc_folds <- numeric(5)
+  predict_list <- list()
+  
+  for (f in 1:5) {
+    
+    cat("  Fold", f, "\n")
+    
+    idx_test <- which(folds == f)
+    
+    y_na <- y
+    y_na[idx_test] <- NA
+    
+    ETA <- list(list(K = Kmat, model = "RKHS"))
+    
+    fit <- BGLR(
+      y = y_na,
+      ETA = ETA,
+      nIter = 20000,
+      burnIn = 5000,
+      thin = 10,
+      verbose = FALSE
+    )
+    
+    yhat_test <- fit$yHat[idx_test]
+    
+    acc_folds[f] <- cor(yhat_test, y[idx_test], use = "complete.obs")
+    
+    predict_list[[f]] <- data.frame(
+      Model    = name_Model,
+      Fold      = f,
+      Genotype = idx_test,
+      Observed = y[idx_test],
+      Predicted   = yhat_test
+    )
+  }
+  
+  predicoes[[name_Model]] <- do.call(rbind, predict_list)
+  
+  results <- rbind(
+    results,
+    data.frame(
+      Model         = name_Model,
+      Mean_Accuracy = mean(acc_folds),
+      SD_Accuracy    = sd(acc_folds)
+    )
+  )
+}
+
+results <- results[order(-results$Mean_Accuracy), ]
+
+print(results)
+
+writexl::write_xlsx(results, "40BSL.xlsx")
+```
+
+## 80
+
+```{r}
+y <- read.table("fen.txt") %>% pull(V3)
+n <- length(y)
+
+set.seed(123)
+folds <- sample(rep(1:5, length.out = n))
+
+results <- data.frame()
+predicoes  <- list()
+
+for (name_Model in names(hyper)) {
+  
+  cat("\nProcessando Model:", name_Model, "\n")
+  
+  Kmat <- hyper[[name_Model]]
+  
+  acc_folds <- numeric(5)
+  predict_list <- list()
+  
+  for (f in 1:5) {
+    
+    cat("  Fold", f, "\n")
+    
+    idx_test <- which(folds == f)
+    
+    y_na <- y
+    y_na[idx_test] <- NA
+    
+    ETA <- list(list(K = Kmat, model = "RKHS"))
+    
+    fit <- BGLR(
+      y = y_na,
+      ETA = ETA,
+      nIter = 20000,
+      burnIn = 5000,
+      thin = 10,
+      verbose = FALSE
+    )
+    
+    yhat_test <- fit$yHat[idx_test]
+    
+    acc_folds[f] <- cor(yhat_test, y[idx_test], use = "complete.obs")
+    
+    predict_list[[f]] <- data.frame(
+      Model    = name_Model,
+      Fold      = f,
+      Genotype = idx_test,
+      Observed = y[idx_test],
+      Predicted   = yhat_test
+    )
+  }
+  
+  predicoes[[name_Model]] <- do.call(rbind, predict_list)
+  
+  results <- rbind(
+    results,
+    data.frame(
+      Model         = name_Model,
+      Mean_Accuracy = mean(acc_folds),
+      SD_Accuracy    = sd(acc_folds)
+    )
+  )
+}
+
+results <- results[order(-results$Mean_Accuracy), ]
+
+print(results)
+
+writexl::write_xlsx(results, "80BSL.xlsx")
+```
+
+## 120
+
+```{r}
+y <- read.table("fen.txt") %>% pull(V4)
+n <- length(y)
+
+set.seed(123)
+folds <- sample(rep(1:5, length.out = n))
+
+results <- data.frame()
+predicoes  <- list()
+
+for (name_Model in names(hyper)) {
+  
+  cat("\nProcessando Model:", name_Model, "\n")
+  
+  Kmat <- hyper[[name_Model]]
+  
+  acc_folds <- numeric(5)
+  predict_list <- list()
+  
+  for (f in 1:5) {
+    
+    cat("  Fold", f, "\n")
+    
+    idx_test <- which(folds == f)
+    
+    y_na <- y
+    y_na[idx_test] <- NA
+    
+    ETA <- list(list(K = Kmat, model = "RKHS"))
+    
+    fit <- BGLR(
+      y = y_na,
+      ETA = ETA,
+      nIter = 20000,
+      burnIn = 5000,
+      thin = 10,
+      verbose = FALSE
+    )
+    
+    yhat_test <- fit$yHat[idx_test]
+    
+    acc_folds[f] <- cor(yhat_test, y[idx_test], use = "complete.obs")
+    
+    predict_list[[f]] <- data.frame(
+      Model    = name_Model,
+      Fold      = f,
+      Genotype = idx_test,
+      Observed = y[idx_test],
+      Predicted   = yhat_test
+    )
+  }
+  
+  predicoes[[name_Model]] <- do.call(rbind, predict_list)
+  
+  results <- rbind(
+    results,
+    data.frame(
+      Model         = name_Model,
+      Mean_Accuracy = mean(acc_folds),
+      SD_Accuracy    = sd(acc_folds)
+    )
+  )
+}
+
+results <- results[order(-results$Mean_Accuracy), ]
+
+print(results)
+
+writexl::write_xlsx(results, "120BSL.xlsx")
+```
+
+## 240
+
+```{r}
+y <- read.table("fen.txt") %>% pull(V5)
+n <- length(y)
+
+set.seed(123)
+folds <- sample(rep(1:5, length.out = n))
+
+results <- data.frame()
+predicoes  <- list()
+
+for (name_Model in names(hyper)) {
+  
+  cat("\nProcessando Model:", name_Model, "\n")
+  
+  Kmat <- hyper[[name_Model]]
+  
+  acc_folds <- numeric(5)
+  predict_list <- list()
+  
+  for (f in 1:5) {
+    
+    cat("  Fold", f, "\n")
+    
+    idx_test <- which(folds == f)
+    
+    y_na <- y
+    y_na[idx_test] <- NA
+    
+    ETA <- list(list(K = Kmat, model = "RKHS"))
+    
+    fit <- BGLR(
+      y = y_na,
+      ETA = ETA,
+      nIter = 20000,
+      burnIn = 5000,
+      thin = 10,
+      verbose = FALSE
+    )
+    
+    yhat_test <- fit$yHat[idx_test]
+    
+    acc_folds[f] <- cor(yhat_test, y[idx_test], use = "complete.obs")
+    
+    predict_list[[f]] <- data.frame(
+      Model    = name_Model,
+      Fold      = f,
+      Genotype = idx_test,
+      Observed = y[idx_test],
+      Predicted   = yhat_test
+    )
+  }
+  
+  predicoes[[name_Model]] <- do.call(rbind, predict_list)
+  
+  results <- rbind(
+    results,
+    data.frame(
+      Model         = name_Model,
+      Mean_Accuracy = mean(acc_folds),
+      SD_Accuracy    = sd(acc_folds)
+    )
+  )
+}
+
+results <- results[order(-results$Mean_Accuracy), ]
+
+print(results)
+
+writexl::write_xlsx(results, "240BSL.xlsx")
+```
+
+## 480
+
+```{r}
+y <- read.table("fen.txt") %>% pull(V6)
+n <- length(y)
+
+set.seed(123)
+folds <- sample(rep(1:5, length.out = n))
+
+results <- data.frame()
+predicoes  <- list()
+
+for (name_Model in names(hyper)) {
+  
+  cat("\nProcessando Model:", name_Model, "\n")
+  
+  Kmat <- hyper[[name_Model]]
+  
+  acc_folds <- numeric(5)
+  predict_list <- list()
+  
+  for (f in 1:5) {
+    
+    cat("  Fold", f, "\n")
+    
+    idx_test <- which(folds == f)
+    
+    y_na <- y
+    y_na[idx_test] <- NA
+    
+    ETA <- list(list(K = Kmat, model = "RKHS"))
+    
+    fit <- BGLR(
+      y = y_na,
+      ETA = ETA,
+      nIter = 20000,
+      burnIn = 5000,
+      thin = 10,
+      verbose = FALSE
+    )
+    
+    yhat_test <- fit$yHat[idx_test]
+    
+    acc_folds[f] <- cor(yhat_test, y[idx_test], use = "complete.obs")
+    
+    predict_list[[f]] <- data.frame(
+      Model    = name_Model,
+      Fold      = f,
+      Genotype = idx_test,
+      Observed = y[idx_test],
+      Predicted   = yhat_test
+    )
+  }
+  
+  predicoes[[name_Model]] <- do.call(rbind, predict_list)
+  
+  results <- rbind(
+    results,
+    data.frame(
+      Model         = name_Model,
+      Mean_Accuracy = mean(acc_folds),
+      SD_Accuracy    = sd(acc_folds)
+    )
+  )
+}
+
+results <- results[order(-results$Mean_Accuracy), ]
+
+print(results)
+
+writexl::write_xlsx(results, "480BSL.xlsx")
+```
+
+# Polynomial
+
+```{r}
+dg <- c(2, 3)
+sc  <- c(0.5, 1, 2)
+off <- c(0, 1, 2)
+
+hyper <- list()
+
+for (i in dg) {
+  for (j in sc) {
+    for (l in off) {
+      Kmat <- kernelMatrix(polydot(degree = i, 
+                                   scale = j, 
+                                   offset = l), 
+                           SNPs)
+      hyper[[paste0("degree", i, "scale", j, "offset", l)]] <- Kmat
+    }
+  }
+}
+```
+
+## 8
+
+```{r}
+y <- read.table("fen.txt") %>% pull(V1)
+n <- length(y)
+
+set.seed(123)
+folds <- sample(rep(1:5, length.out = n))
+
+results <- data.frame()
+predicoes  <- list()
+
+for (name_Model in names(hyper)) {
+  
+  cat("\nProcessando Model:", name_Model, "\n")
+  
+  Kmat <- hyper[[name_Model]]
+  
+  acc_folds <- numeric(5)
+  predict_list <- list()
+  
+  for (f in 1:5) {
+    
+    cat("  Fold", f, "\n")
+    
+    idx_test <- which(folds == f)
+    
+    y_na <- y
+    y_na[idx_test] <- NA
+    
+    ETA <- list(list(K = Kmat, model = "RKHS"))
+    
+    fit <- BGLR(
+      y = y_na,
+      ETA = ETA,
+      nIter = 20000,
+      burnIn = 5000,
+      thin = 10,
+      verbose = FALSE
+    )
+    
+    yhat_test <- fit$yHat[idx_test]
+    
+    acc_folds[f] <- cor(yhat_test, y[idx_test], use = "complete.obs")
+    
+    predict_list[[f]] <- data.frame(
+      Model    = name_Model,
+      Fold      = f,
+      Genotype = idx_test,
+      Observed = y[idx_test],
+      Predicted   = yhat_test
+    )
+  }
+  
+  predicoes[[name_Model]] <- do.call(rbind, predict_list)
+  
+  results <- rbind(
+    results,
+    data.frame(
+      Model         = name_Model,
+      Mean_Accuracy = mean(acc_folds),
+      SD_Accuracy    = sd(acc_folds)
+    )
+  )
+}
+
+results <- results[order(-results$Mean_Accuracy), ]
+
+print(results)
+
+writexl::write_xlsx(results, "8POLY.xlsx")
+```
+
+## 40
+
+```{r}
+y <- read.table("fen.txt") %>% pull(V2)
+n <- length(y)
+
+set.seed(123)
+folds <- sample(rep(1:5, length.out = n))
+
+results <- data.frame()
+predicoes  <- list()
+
+for (name_Model in names(hyper)) {
+  
+  cat("\nProcessando Model:", name_Model, "\n")
+  
+  Kmat <- hyper[[name_Model]]
+  
+  acc_folds <- numeric(5)
+  predict_list <- list()
+  
+  for (f in 1:5) {
+    
+    cat("  Fold", f, "\n")
+    
+    idx_test <- which(folds == f)
+    
+    y_na <- y
+    y_na[idx_test] <- NA
+    
+    ETA <- list(list(K = Kmat, model = "RKHS"))
+    
+    fit <- BGLR(
+      y = y_na,
+      ETA = ETA,
+      nIter = 20000,
+      burnIn = 5000,
+      thin = 10,
+      verbose = FALSE
+    )
+    
+    yhat_test <- fit$yHat[idx_test]
+    
+    acc_folds[f] <- cor(yhat_test, y[idx_test], use = "complete.obs")
+    
+    predict_list[[f]] <- data.frame(
+      Model    = name_Model,
+      Fold      = f,
+      Genotype = idx_test,
+      Observed = y[idx_test],
+      Predicted   = yhat_test
+    )
+  }
+  
+  predicoes[[name_Model]] <- do.call(rbind, predict_list)
+  
+  results <- rbind(
+    results,
+    data.frame(
+      Model         = name_Model,
+      Mean_Accuracy = mean(acc_folds),
+      SD_Accuracy    = sd(acc_folds)
+    )
+  )
+}
+
+results <- results[order(-results$Mean_Accuracy), ]
+
+print(results)
+
+writexl::write_xlsx(results, "40POLY.xlsx")
+```
+
+## 80
+
+```{r}
+y <- read.table("fen.txt") %>% pull(V3)
+n <- length(y)
+
+set.seed(123)
+folds <- sample(rep(1:5, length.out = n))
+
+results <- data.frame()
+predicoes  <- list()
+
+for (name_Model in names(hyper)) {
+  
+  cat("\nProcessando Model:", name_Model, "\n")
+  
+  Kmat <- hyper[[name_Model]]
+  
+  acc_folds <- numeric(5)
+  predict_list <- list()
+  
+  for (f in 1:5) {
+    
+    cat("  Fold", f, "\n")
+    
+    idx_test <- which(folds == f)
+    
+    y_na <- y
+    y_na[idx_test] <- NA
+    
+    ETA <- list(list(K = Kmat, model = "RKHS"))
+    
+    fit <- BGLR(
+      y = y_na,
+      ETA = ETA,
+      nIter = 20000,
+      burnIn = 5000,
+      thin = 10,
+      verbose = FALSE
+    )
+    
+    yhat_test <- fit$yHat[idx_test]
+    
+    acc_folds[f] <- cor(yhat_test, y[idx_test], use = "complete.obs")
+    
+    predict_list[[f]] <- data.frame(
+      Model    = name_Model,
+      Fold      = f,
+      Genotype = idx_test,
+      Observed = y[idx_test],
+      Predicted   = yhat_test
+    )
+  }
+  
+  predicoes[[name_Model]] <- do.call(rbind, predict_list)
+  
+  results <- rbind(
+    results,
+    data.frame(
+      Model         = name_Model,
+      Mean_Accuracy = mean(acc_folds),
+      SD_Accuracy    = sd(acc_folds)
+    )
+  )
+}
+
+results <- results[order(-results$Mean_Accuracy), ]
+
+print(results)
+
+writexl::write_xlsx(results, "80POLY.xlsx")
+```
+
+## 120
+
+```{r}
+y <- read.table("fen.txt") %>% pull(V4)
+n <- length(y)
+
+set.seed(123)
+folds <- sample(rep(1:5, length.out = n))
+
+results <- data.frame()
+predicoes  <- list()
+
+for (name_Model in names(hyper)) {
+  
+  cat("\nProcessando Model:", name_Model, "\n")
+  
+  Kmat <- hyper[[name_Model]]
+  
+  acc_folds <- numeric(5)
+  predict_list <- list()
+  
+  for (f in 1:5) {
+    
+    cat("  Fold", f, "\n")
+    
+    idx_test <- which(folds == f)
+    
+    y_na <- y
+    y_na[idx_test] <- NA
+    
+    ETA <- list(list(K = Kmat, model = "RKHS"))
+    
+    fit <- BGLR(
+      y = y_na,
+      ETA = ETA,
+      nIter = 20000,
+      burnIn = 5000,
+      thin = 10,
+      verbose = FALSE
+    )
+    
+    yhat_test <- fit$yHat[idx_test]
+    
+    acc_folds[f] <- cor(yhat_test, y[idx_test], use = "complete.obs")
+    
+    predict_list[[f]] <- data.frame(
+      Model    = name_Model,
+      Fold      = f,
+      Genotype = idx_test,
+      Observed = y[idx_test],
+      Predicted   = yhat_test
+    )
+  }
+  
+  predicoes[[name_Model]] <- do.call(rbind, predict_list)
+  
+  results <- rbind(
+    results,
+    data.frame(
+      Model         = name_Model,
+      Mean_Accuracy = mean(acc_folds),
+      SD_Accuracy    = sd(acc_folds)
+    )
+  )
+}
+
+results <- results[order(-results$Mean_Accuracy), ]
+
+print(results)
+
+writexl::write_xlsx(results, "120POLY.xlsx")
+```
+
+## 240
+
+```{r}
+y <- read.table("fen.txt") %>% pull(V5)
+n <- length(y)
+
+set.seed(123)
+folds <- sample(rep(1:5, length.out = n))
+
+results <- data.frame()
+predicoes  <- list()
+
+for (name_Model in names(hyper)) {
+  
+  cat("\nProcessando Model:", name_Model, "\n")
+  
+  Kmat <- hyper[[name_Model]]
+  
+  acc_folds <- numeric(5)
+  predict_list <- list()
+  
+  for (f in 1:5) {
+    
+    cat("  Fold", f, "\n")
+    
+    idx_test <- which(folds == f)
+    
+    y_na <- y
+    y_na[idx_test] <- NA
+    
+    ETA <- list(list(K = Kmat, model = "RKHS"))
+    
+    fit <- BGLR(
+      y = y_na,
+      ETA = ETA,
+      nIter = 20000,
+      burnIn = 5000,
+      thin = 10,
+      verbose = FALSE
+    )
+    
+    yhat_test <- fit$yHat[idx_test]
+    
+    acc_folds[f] <- cor(yhat_test, y[idx_test], use = "complete.obs")
+    
+    predict_list[[f]] <- data.frame(
+      Model    = name_Model,
+      Fold      = f,
+      Genotype = idx_test,
+      Observed = y[idx_test],
+      Predicted   = yhat_test
+    )
+  }
+  
+  predicoes[[name_Model]] <- do.call(rbind, predict_list)
+  
+  results <- rbind(
+    results,
+    data.frame(
+      Model         = name_Model,
+      Mean_Accuracy = mean(acc_folds),
+      SD_Accuracy    = sd(acc_folds)
+    )
+  )
+}
+
+results <- results[order(-results$Mean_Accuracy), ]
+
+print(results)
+
+writexl::write_xlsx(results, "240POLY.xlsx")
+```
+
+## 480
+
+```{r}
+y <- read.table("fen.txt") %>% pull(V6)
+n <- length(y)
+
+set.seed(123)
+folds <- sample(rep(1:5, length.out = n))
+
+results <- data.frame()
+predicoes  <- list()
+
+for (name_Model in names(hyper)) {
+  
+  cat("\nProcessando Model:", name_Model, "\n")
+  
+  Kmat <- hyper[[name_Model]]
+  
+  acc_folds <- numeric(5)
+  predict_list <- list()
+  
+  for (f in 1:5) {
+    
+    cat("  Fold", f, "\n")
+    
+    idx_test <- which(folds == f)
+    
+    y_na <- y
+    y_na[idx_test] <- NA
+    
+    ETA <- list(list(K = Kmat, model = "RKHS"))
+    
+    fit <- BGLR(
+      y = y_na,
+      ETA = ETA,
+      nIter = 20000,
+      burnIn = 5000,
+      thin = 10,
+      verbose = FALSE
+    )
+    
+    yhat_test <- fit$yHat[idx_test]
+    
+    acc_folds[f] <- cor(yhat_test, y[idx_test], use = "complete.obs")
+    
+    predict_list[[f]] <- data.frame(
+      Model    = name_Model,
+      Fold      = f,
+      Genotype = idx_test,
+      Observed = y[idx_test],
+      Predicted   = yhat_test
+    )
+  }
+  
+  predicoes[[name_Model]] <- do.call(rbind, predict_list)
+  
+  results <- rbind(
+    results,
+    data.frame(
+      Model         = name_Model,
+      Mean_Accuracy = mean(acc_folds),
+      SD_Accuracy    = sd(acc_folds)
+    )
+  )
+}
+
+results <- results[order(-results$Mean_Accuracy), ]
+
+print(results)
+
+writexl::write_xlsx(results, "480POLY.xlsx")
+```
+
+# Gaussian
+
+```{r}
+Kmat0.001 <- kernelMatrix(rbfdot(sigma = 0.001), SNPs)
+Kmat0.01 <- kernelMatrix(rbfdot(sigma = 0.01), SNPs)
+Kmat0.05 <- kernelMatrix(rbfdot(sigma = 0.05), SNPs)
+Kmat0.1 <- kernelMatrix(rbfdot(sigma = 0.1), SNPs)
+
+sg <- list(
+  sigma0.1 = Kmat0.1,
+  sigma0.05 = Kmat0.05,
+  sigma0.01 = Kmat0.01,
+  sigma0.001 = Kmat0.001
+)
+```
+
+## 8
+
+```{r}
+y <- read.table("fen.txt") %>% pull(V1)
+n <- length(y)
+
+set.seed(123)
+folds <- sample(rep(1:5, length.out = n))
+
+results <- data.frame()
+predicoes  <- list()
+
+for (name_Model in names(sg)) {
+  
+  cat("\nProcessando Model:", name_Model, "\n")
+  
+  Kmat <- sg[[name_Model]]
+  
+  acc_folds <- numeric(5)
+  predict_list <- list()
+  
+  for (f in 1:5) {
+    
+    cat("  Fold", f, "\n")
+    
+    idx_test <- which(folds == f)
+    
+    y_na <- y
+    y_na[idx_test] <- NA
+    
+    ETA <- list(list(K = Kmat, model = "RKHS"))
+    
+    fit <- BGLR(
+      y = y_na,
+      ETA = ETA,
+      nIter = 20000,
+      burnIn = 5000,
+      thin = 10,
+      verbose = FALSE
+    )
+    
+    yhat_test <- fit$yHat[idx_test]
+    
+    acc_folds[f] <- cor(yhat_test, y[idx_test], use = "complete.obs")
+    
+    predict_list[[f]] <- data.frame(
+      Model    = name_Model,
+      Fold      = f,
+      Genotype = idx_test,
+      Observed = y[idx_test],
+      Predicted   = yhat_test
+    )
+  }
+  
+  predicoes[[name_Model]] <- do.call(rbind, predict_list)
+  
+  results <- rbind(
+    results,
+    data.frame(
+      Model         = name_Model,
+      Mean_Accuracy = mean(acc_folds),
+      SD_Accuracy    = sd(acc_folds)
+    )
+  )
+}
+
+results <- results[order(-results$Mean_Accuracy), ]
+
+print(results)
+
+writexl::write_xlsx(results, "8GAUSS.xlsx")
+```
+
+## 40
+
+```{r}
+y <- read.table("fen.txt") %>% pull(V2)
+n <- length(y)
+
+set.seed(123)
+folds <- sample(rep(1:5, length.out = n))
+
+results <- data.frame()
+predicoes  <- list()
+
+for (name_Model in names(sg)) {
+  
+  cat("\nProcessando Model:", name_Model, "\n")
+  
+  Kmat <- sg[[name_Model]]
+  
+  acc_folds <- numeric(5)
+  predict_list <- list()
+  
+  for (f in 1:5) {
+    
+    cat("  Fold", f, "\n")
+    
+    idx_test <- which(folds == f)
+    
+    y_na <- y
+    y_na[idx_test] <- NA
+    
+    ETA <- list(list(K = Kmat, model = "RKHS"))
+    
+    fit <- BGLR(
+      y = y_na,
+      ETA = ETA,
+      nIter = 20000,
+      burnIn = 5000,
+      thin = 10,
+      verbose = FALSE
+    )
+    
+    yhat_test <- fit$yHat[idx_test]
+    
+    acc_folds[f] <- cor(yhat_test, y[idx_test], use = "complete.obs")
+    
+    predict_list[[f]] <- data.frame(
+      Model    = name_Model,
+      Fold      = f,
+      Genotype = idx_test,
+      Observed = y[idx_test],
+      Predicted   = yhat_test
+    )
+  }
+  
+  predicoes[[name_Model]] <- do.call(rbind, predict_list)
+  
+  results <- rbind(
+    results,
+    data.frame(
+      Model         = name_Model,
+      Mean_Accuracy = mean(acc_folds),
+      SD_Accuracy    = sd(acc_folds)
+    )
+  )
+}
+
+results <- results[order(-results$Mean_Accuracy), ]
+
+print(results)
+
+writexl::write_xlsx(results, "40GAUSS.xlsx")
+```
+
+## 80
+
+```{r}
+y <- read.table("fen.txt") %>% pull(V3)
+n <- length(y)
+
+set.seed(123)
+folds <- sample(rep(1:5, length.out = n))
+
+results <- data.frame()
+predicoes  <- list()
+
+for (name_Model in names(sg)) {
+  
+  cat("\nProcessando Model:", name_Model, "\n")
+  
+  Kmat <- sg[[name_Model]]
+  
+  acc_folds <- numeric(5)
+  predict_list <- list()
+  
+  for (f in 1:5) {
+    
+    cat("  Fold", f, "\n")
+    
+    idx_test <- which(folds == f)
+    
+    y_na <- y
+    y_na[idx_test] <- NA
+    
+    ETA <- list(list(K = Kmat, model = "RKHS"))
+    
+    fit <- BGLR(
+      y = y_na,
+      ETA = ETA,
+      nIter = 20000,
+      burnIn = 5000,
+      thin = 10,
+      verbose = FALSE
+    )
+    
+    yhat_test <- fit$yHat[idx_test]
+    
+    acc_folds[f] <- cor(yhat_test, y[idx_test], use = "complete.obs")
+    
+    predict_list[[f]] <- data.frame(
+      Model    = name_Model,
+      Fold      = f,
+      Genotype = idx_test,
+      Observed = y[idx_test],
+      Predicted   = yhat_test
+    )
+  }
+  
+  predicoes[[name_Model]] <- do.call(rbind, predict_list)
+  
+  results <- rbind(
+    results,
+    data.frame(
+      Model         = name_Model,
+      Mean_Accuracy = mean(acc_folds),
+      SD_Accuracy    = sd(acc_folds)
+    )
+  )
+}
+
+results <- results[order(-results$Mean_Accuracy), ]
+
+print(results)
+
+writexl::write_xlsx(results, "80GAUSS.xlsx")
+```
+
+## 120
+
+```{r}
+y <- read.table("fen.txt") %>% pull(V4)
+n <- length(y)
+
+set.seed(123)
+folds <- sample(rep(1:5, length.out = n))
+
+results <- data.frame()
+predicoes  <- list()
+
+for (name_Model in names(sg)) {
+  
+  cat("\nProcessando Model:", name_Model, "\n")
+  
+  Kmat <- sg[[name_Model]]
+  
+  acc_folds <- numeric(5)
+  predict_list <- list()
+  
+  for (f in 1:5) {
+    
+    cat("  Fold", f, "\n")
+    
+    idx_test <- which(folds == f)
+    
+    y_na <- y
+    y_na[idx_test] <- NA
+    
+    ETA <- list(list(K = Kmat, model = "RKHS"))
+    
+    fit <- BGLR(
+      y = y_na,
+      ETA = ETA,
+      nIter = 20000,
+      burnIn = 5000,
+      thin = 10,
+      verbose = FALSE
+    )
+    
+    yhat_test <- fit$yHat[idx_test]
+    
+    acc_folds[f] <- cor(yhat_test, y[idx_test], use = "complete.obs")
+    
+    predict_list[[f]] <- data.frame(
+      Model    = name_Model,
+      Fold      = f,
+      Genotype = idx_test,
+      Observed = y[idx_test],
+      Predicted   = yhat_test
+    )
+  }
+  
+  predicoes[[name_Model]] <- do.call(rbind, predict_list)
+  
+  results <- rbind(
+    results,
+    data.frame(
+      Model         = name_Model,
+      Mean_Accuracy = mean(acc_folds),
+      SD_Accuracy    = sd(acc_folds)
+    )
+  )
+}
+
+results <- results[order(-results$Mean_Accuracy), ]
+
+print(results)
+
+writexl::write_xlsx(results, "120GAUSS.xlsx")
+```
+
+## 240
+
+```{r}
+y <- read.table("fen.txt") %>% pull(V5)
+n <- length(y)
+
+set.seed(123)
+folds <- sample(rep(1:5, length.out = n))
+
+results <- data.frame()
+predicoes  <- list()
+
+for (name_Model in names(sg)) {
+  
+  cat("\nProcessando Model:", name_Model, "\n")
+  
+  Kmat <- sg[[name_Model]]
+  
+  acc_folds <- numeric(5)
+  predict_list <- list()
+  
+  for (f in 1:5) {
+    
+    cat("  Fold", f, "\n")
+    
+    idx_test <- which(folds == f)
+    
+    y_na <- y
+    y_na[idx_test] <- NA
+    
+    ETA <- list(list(K = Kmat, model = "RKHS"))
+    
+    fit <- BGLR(
+      y = y_na,
+      ETA = ETA,
+      nIter = 20000,
+      burnIn = 5000,
+      thin = 10,
+      verbose = FALSE
+    )
+    
+    yhat_test <- fit$yHat[idx_test]
+    
+    acc_folds[f] <- cor(yhat_test, y[idx_test], use = "complete.obs")
+    
+    predict_list[[f]] <- data.frame(
+      Model    = name_Model,
+      Fold      = f,
+      Genotype = idx_test,
+      Observed = y[idx_test],
+      Predicted   = yhat_test
+    )
+  }
+  
+  predicoes[[name_Model]] <- do.call(rbind, predict_list)
+  
+  results <- rbind(
+    results,
+    data.frame(
+      Model         = name_Model,
+      Mean_Accuracy = mean(acc_folds),
+      SD_Accuracy    = sd(acc_folds)
+    )
+  )
+}
+
+results <- results[order(-results$Mean_Accuracy), ]
+
+print(results)
+
+writexl::write_xlsx(results, "240GAUSS.xlsx")
+```
+
+## 480
+
+```{r}
+y <- read.table("fen.txt") %>% pull(V6)
+n <- length(y)
+
+set.seed(123)
+folds <- sample(rep(1:5, length.out = n))
+
+results <- data.frame()
+predicoes  <- list()
+
+for (name_Model in names(sg)) {
+  
+  cat("\nProcessando Model:", name_Model, "\n")
+  
+  Kmat <- sg[[name_Model]]
+  
+  acc_folds <- numeric(5)
+  predict_list <- list()
+  
+  for (f in 1:5) {
+    
+    cat("  Fold", f, "\n")
+    
+    idx_test <- which(folds == f)
+    
+    y_na <- y
+    y_na[idx_test] <- NA
+    
+    ETA <- list(list(K = Kmat, model = "RKHS"))
+    
+    fit <- BGLR(
+      y = y_na,
+      ETA = ETA,
+      nIter = 20000,
+      burnIn = 5000,
+      thin = 10,
+      verbose = FALSE
+    )
+    
+    yhat_test <- fit$yHat[idx_test]
+    
+    acc_folds[f] <- cor(yhat_test, y[idx_test], use = "complete.obs")
+    
+    predict_list[[f]] <- data.frame(
+      Model    = name_Model,
+      Fold      = f,
+      Genotype = idx_test,
+      Observed = y[idx_test],
+      Predicted   = yhat_test
+    )
+  }
+  
+  predicoes[[name_Model]] <- do.call(rbind, predict_list)
+  
+  results <- rbind(
+    results,
+    data.frame(
+      Model         = name_Model,
+      Mean_Accuracy = mean(acc_folds),
+      SD_Accuracy    = sd(acc_folds)
+    )
+  )
+}
+
+results <- results[order(-results$Mean_Accuracy), ]
+
+print(results)
+
+writexl::write_xlsx(results, "480GAUSS.xlsx")
+```
+
+# Random Forest
+
+```{r}
+library(caret)
+library(ranger)
+
+Kmat <- as.data.frame(SNPs)
+
+data <- read.table("fen.txt", header = FALSE)
+
+results_list <- list()
+folds_list <- list()
+
+for (v in 1:6) {
+  
+  cat("Trait Running V", v, "\n")
+  
+  y <- data %>% pull(v)
+  
+  data <- Kmat %>%
+    mutate(y = y)
+  
+  set.seed(123)
+  
+  Model <- train(
+    y ~ .,
+    data = data,
+    method = "ranger",
+    trControl = trainControl(
+      method = "cv",
+      number = 5,
+    )
+  )
+  
+  print(Model)
+  
+  predicoes_cv <- Model$pred
+  
+  cor_folds <- predicoes_cv %>%
+    group_by(Resample) %>%
+    summarise(
+      Accuracy = cor(pred, obs, use = "complete.obs"),
+      .groups = "drop"
+    ) %>%
+    mutate(
+      Trait = paste0("V", v)
+    )
+  
+  results_list[[v]] <- data.frame(
+    Trait = paste0("V", v),
+    Mean_Accuracy = mean(cor_folds$Accuracy),
+    SD_Accuracy = sd(cor_folds$Accuracy)
+  )
+}
+
+results <- do.call(rbind, results_list)
+print(results)
+
+write_xlsx(results, "RF.xlsx")
+```

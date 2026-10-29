@@ -1,0 +1,1332 @@
+---
+title: "Variance Components"
+format: html
+execute: 
+  eval: false 
+editor: visual
+---
+
+```{r}
+library(tidyverse)
+library(BGLR)
+```
+
+# Y = E + G + e
+
+## GBLUP
+
+### Yield
+
+```{r}
+load("EZ.rda")
+load("GDec.rda")
+
+y <- readxl::read_excel("Y_CV.xlsx") %>% pull(yield)
+
+ETA <- list(
+  list(X = EZ, model = "FIXED"),
+  list(V = GDec$vectors, d = GDec$values, model = "RKHS")
+)
+
+set.seed(1)
+
+modelo <- BGLR(
+  y = y,
+  ETA = ETA,
+  nIter = 20000,
+  burnIn = 5000,
+  verbose = FALSE
+)
+
+save(modelo, file = "GBLUP_Yield_G.rda")
+
+rm(list = ls())
+```
+
+### Protein
+
+```{r}
+load("EZ.rda")
+load("GDec.rda")
+
+y <- readxl::read_excel("Y_CV.xlsx") %>% pull(protein)
+
+ETA <- list(
+  list(X = EZ, model = "FIXED"),
+  list(V = GDec$vectors, d = GDec$values, model = "RKHS")
+)
+
+set.seed(1)
+
+modelo <- BGLR(
+  y = y,
+  ETA = ETA,
+  nIter = 20000,
+  burnIn = 5000,
+  verbose = FALSE
+)
+
+save(modelo, file = "GBLUP_Protein_G.rda")
+
+rm(list = ls())
+```
+
+### Oil
+
+```{r}
+load("EZ.rda")
+load("GDec.rda")
+
+y <- readxl::read_excel("Y_CV.xlsx") %>% pull(oil)
+
+ETA <- list(
+  list(X = EZ, model = "FIXED"),
+  list(V = GDec$vectors, d = GDec$values, model = "RKHS")
+)
+
+set.seed(1)
+
+modelo <- BGLR(
+  y = y,
+  ETA = ETA,
+  nIter = 20000,
+  burnIn = 5000,
+  verbose = FALSE
+)
+
+save(modelo, file = "GBLUP_Oil_G.rda")
+
+rm(list = ls())
+```
+
+## Laplacian
+
+### Yield
+
+```{r}
+load("EZ.rda")
+load("GDec_lpc.rda")
+
+y <- readxl::read_excel("Y_CV.xlsx") %>% pull(yield)
+
+ETA <- list(
+  list(X = EZ, model = "FIXED"),
+  list(V = GDec$vectors, d = GDec$values, model = "RKHS")
+)
+
+set.seed(1)
+
+modelo <- BGLR(
+  y = y,
+  ETA = ETA,
+  nIter = 20000,
+  burnIn = 5000,
+  verbose = FALSE
+)
+
+save(modelo, file = "LPC_Yield_G.rda")
+
+rm(list = ls())
+```
+
+### Protein
+
+```{r}
+load("EZ.rda")
+load("GDec_lpc.rda")
+
+y <- readxl::read_excel("Y_CV.xlsx") %>% pull(protein)
+
+ETA <- list(
+  list(X = EZ, model = "FIXED"),
+  list(V = GDec$vectors, d = GDec$values, model = "RKHS")
+)
+
+set.seed(1)
+
+modelo <- BGLR(
+  y = y,
+  ETA = ETA,
+  nIter = 20000,
+  burnIn = 5000,
+  verbose = FALSE
+)
+
+save(modelo, file = "LPC_Protein_G.rda")
+
+rm(list = ls())
+```
+
+### Oil
+
+```{r}
+load("EZ.rda")
+load("GDec_lpc.rda")
+
+y <- readxl::read_excel("Y_CV.xlsx") %>% pull(oil)
+
+ETA <- list(
+  list(X = EZ, model = "FIXED"),
+  list(V = GDec$vectors, d = GDec$values, model = "RKHS")
+)
+
+set.seed(1)
+
+modelo <- BGLR(
+  y = y,
+  ETA = ETA,
+  nIter = 20000,
+  burnIn = 5000,
+  verbose = FALSE
+)
+
+save(modelo, file = "LPC_Oil_G.rda")
+
+rm(list = ls())
+```
+
+## Gaussian
+
+### Yield
+
+```{r}
+load("EZ.rda")
+load("GDec_gauss.rda")
+
+y <- readxl::read_excel("Y_CV.xlsx") %>% pull(yield)
+
+ETA <- list(
+  list(X = EZ, model = "FIXED"),
+  list(V = GDec$vectors, d = GDec$values, model = "RKHS")
+)
+
+set.seed(1)
+
+modelo <- BGLR(
+  y = y,
+  ETA = ETA,
+  nIter = 20000,
+  burnIn = 5000,
+  verbose = FALSE
+)
+
+save(modelo, file = "GAUSS_Yield_G.rda")
+
+rm(list = ls())
+```
+
+### Protein
+
+```{r}
+load("EZ.rda")
+load("GDec_gauss.rda")
+
+y <- readxl::read_excel("Y_CV.xlsx") %>% pull(protein)
+
+ETA <- list(
+  list(X = EZ, model = "FIXED"),
+  list(V = GDec$vectors, d = GDec$values, model = "RKHS")
+)
+
+set.seed(1)
+
+modelo <- BGLR(
+  y = y,
+  ETA = ETA,
+  nIter = 20000,
+  burnIn = 5000,
+  verbose = FALSE
+)
+
+save(modelo, file = "GAUSS_Protein_G.rda")
+
+rm(list = ls())
+```
+
+### Oil
+
+```{r}
+load("EZ.rda")
+load("GDec_gauss.rda")
+
+y <- readxl::read_excel("Y_CV.xlsx") %>% pull(oil)
+
+ETA <- list(
+  list(X = EZ, model = "FIXED"),
+  list(V = GDec$vectors, d = GDec$values, model = "RKHS")
+)
+
+set.seed(1)
+
+modelo <- BGLR(
+  y = y,
+  ETA = ETA,
+  nIter = 20000,
+  burnIn = 5000,
+  verbose = FALSE
+)
+
+save(modelo, file = "GAUSS_Oil_G.rda")
+
+rm(list = ls())
+```
+
+## Bessel
+
+### Yield
+
+```{r}
+load("EZ.rda")
+load("GDec_bsl.rda")
+
+y <- readxl::read_excel("Y_CV.xlsx") %>% pull(yield)
+
+ETA <- list(
+  list(X = EZ, model = "FIXED"),
+  list(V = GDec$vectors, d = GDec$values, model = "RKHS")
+)
+
+set.seed(1)
+
+modelo <- BGLR(
+  y = y,
+  ETA = ETA,
+  nIter = 20000,
+  burnIn = 5000,
+  verbose = FALSE
+)
+
+save(modelo, file = "BSL_Yield_G.rda")
+
+rm(list = ls())
+```
+
+### Protein
+
+```{r}
+load("EZ.rda")
+load("GDec_bsl.rda")
+
+y <- readxl::read_excel("Y_CV.xlsx") %>% pull(protein)
+
+ETA <- list(
+  list(X = EZ, model = "FIXED"),
+  list(V = GDec$vectors, d = GDec$values, model = "RKHS")
+)
+
+set.seed(1)
+
+modelo <- BGLR(
+  y = y,
+  ETA = ETA,
+  nIter = 20000,
+  burnIn = 5000,
+  verbose = FALSE
+)
+
+save(modelo, file = "BSL_Protein_G.rda")
+
+rm(list = ls())
+```
+
+### Oil
+
+```{r}
+load("EZ.rda")
+load("GDec_bsl.rda")
+
+y <- readxl::read_excel("Y_CV.xlsx") %>% pull(oil)
+
+ETA <- list(
+  list(X = EZ, model = "FIXED"),
+  list(V = GDec$vectors, d = GDec$values, model = "RKHS")
+)
+
+set.seed(1)
+
+modelo <- BGLR(
+  y = y,
+  ETA = ETA,
+  nIter = 20000,
+  burnIn = 5000,
+  verbose = FALSE
+)
+
+save(modelo, file = "BSL_Oil_G.rda")
+
+rm(list = ls())
+```
+
+## Polynomial
+
+### Yield
+
+```{r}
+load("EZ.rda")
+load("GDec_poly.rda")
+
+y <- readxl::read_excel("Y_CV.xlsx") %>% pull(yield)
+
+ETA <- list(
+  list(X = EZ, model = "FIXED"),
+  list(V = GDec$vectors, d = GDec$values, model = "RKHS")
+)
+
+set.seed(1)
+
+modelo <- BGLR(
+  y = y,
+  ETA = ETA,
+  nIter = 20000,
+  burnIn = 5000,
+  verbose = FALSE
+)
+
+save(modelo, file = "POLY_Yield_G.rda")
+
+rm(list = ls())
+```
+
+### Protein
+
+```{r}
+load("EZ.rda")
+load("GDec_poly.rda")
+
+y <- readxl::read_excel("Y_CV.xlsx") %>% pull(protein)
+
+ETA <- list(
+  list(X = EZ, model = "FIXED"),
+  list(V = GDec$vectors, d = GDec$values, model = "RKHS")
+)
+
+set.seed(1)
+
+modelo <- BGLR(
+  y = y,
+  ETA = ETA,
+  nIter = 20000,
+  burnIn = 5000,
+  verbose = FALSE
+)
+
+save(modelo, file = "POLY_Protein_G.rda")
+
+rm(list = ls())
+```
+
+### Oil
+
+```{r}
+load("EZ.rda")
+load("GDec_poly.rda")
+
+y <- readxl::read_excel("Y_CV.xlsx") %>% pull(oil)
+
+ETA <- list(
+  list(X = EZ, model = "FIXED"),
+  list(V = GDec$vectors, d = GDec$values, model = "RKHS")
+)
+
+set.seed(1)
+
+modelo <- BGLR(
+  y = y,
+  ETA = ETA,
+  nIter = 20000,
+  burnIn = 5000,
+  verbose = FALSE
+)
+
+save(modelo, file = "POLY_Oil_G.rda")
+
+rm(list = ls())
+```
+
+## Components
+
+```{r}
+load("GBLUP_Yield_G.rda")
+
+var_e <- modelo$varE
+var_g <- var(modelo$ETA[[2]]$u)
+h2 <- var_g / (var_g + var_e)
+
+comp_y <- data.frame(G = var_g,
+                     e = var_e,
+                     herd = h2,
+                     trait = "yield")
+
+load("GBLUP_Protein_G.rda")
+
+var_e <- modelo$varE
+var_g <- var(modelo$ETA[[2]]$u)
+h2 <- var_g / (var_g + var_e)
+
+comp_p <- data.frame(G = var_g,
+                     e = var_e,
+                     herd = h2,
+                     trait = "protein")
+
+load("GBLUP_Oil_G.rda")
+
+var_e <- modelo$varE
+var_g <- var(modelo$ETA[[2]]$u)
+h2 <- var_g / (var_g + var_e)
+
+comp_o <- data.frame(G = var_g,
+                     e = var_e,
+                     herd = h2,
+                     trait = "oil")
+
+gblup <- rbind(comp_y, comp_p, comp_o)
+
+gblup$model <- "GBLUP"
+gblup$eff <- "Main Effects"
+
+load("LPC_Yield_G.rda")
+
+var_e <- modelo$varE
+var_g <- var(modelo$ETA[[2]]$u)
+h2 <- var_g / (var_g + var_e)
+
+comp_y <- data.frame(G = var_g,
+                     e = var_e,
+                     herd = h2,
+                     trait = "yield")
+
+load("LPC_Protein_G.rda")
+
+var_e <- modelo$varE
+var_g <- var(modelo$ETA[[2]]$u)
+h2 <- var_g / (var_g + var_e)
+
+comp_p <- data.frame(G = var_g,
+                     e = var_e,
+                     herd = h2,
+                     trait = "protein")
+
+load("LPC_Oil_G.rda")
+
+var_e <- modelo$varE
+var_g <- var(modelo$ETA[[2]]$u)
+h2 <- var_g / (var_g + var_e)
+
+comp_o <- data.frame(G = var_g,
+                     e = var_e,
+                     herd = h2,
+                     trait = "oil")
+
+lpc <- rbind(comp_y, comp_p, comp_o)
+
+lpc$model <- "Laplacian"
+lpc$eff <- "Main Effects"
+
+load("GAUSS_Yield_G.rda")
+
+var_e <- modelo$varE
+var_g <- var(modelo$ETA[[2]]$u)
+h2 <- var_g / (var_g + var_e)
+
+comp_y <- data.frame(G = var_g,
+                     e = var_e,
+                     herd = h2,
+                     trait = "yield")
+
+load("GAUSS_Protein_G.rda")
+
+var_e <- modelo$varE
+var_g <- var(modelo$ETA[[2]]$u)
+h2 <- var_g / (var_g + var_e)
+
+comp_p <- data.frame(G = var_g,
+                     e = var_e,
+                     herd = h2,
+                     trait = "protein")
+
+load("GAUSS_Oil_G.rda")
+
+var_e <- modelo$varE
+var_g <- var(modelo$ETA[[2]]$u)
+h2 <- var_g / (var_g + var_e)
+
+comp_o <- data.frame(G = var_g,
+                     e = var_e,
+                     herd = h2,
+                     trait = "oil")
+
+gauss <- rbind(comp_y, comp_p, comp_o)
+
+gauss$model <- "Gaussian"
+gauss$eff <- "Main Effects"
+
+load("BSL_Yield_G.rda")
+
+var_e <- modelo$varE
+var_g <- var(modelo$ETA[[2]]$u)
+h2 <- var_g / (var_g + var_e)
+
+comp_y <- data.frame(G = var_g,
+                     e = var_e,
+                     herd = h2,
+                     trait = "yield")
+
+load("BSL_Protein_G.rda")
+
+var_e <- modelo$varE
+var_g <- var(modelo$ETA[[2]]$u)
+h2 <- var_g / (var_g + var_e)
+
+comp_p <- data.frame(G = var_g,
+                     e = var_e,
+                     herd = h2,
+                     trait = "protein")
+
+load("BSL_Oil_G.rda")
+
+var_e <- modelo$varE
+var_g <- var(modelo$ETA[[2]]$u)
+h2 <- var_g / (var_g + var_e)
+
+comp_o <- data.frame(G = var_g,
+                     e = var_e,
+                     herd = h2,
+                     trait = "oil")
+
+bsl <- rbind(comp_y, comp_p, comp_o)
+
+bsl$model <- "Bessel"
+bsl$eff <- "Main Effects"
+
+load("POLY_Yield_G.rda")
+
+var_e <- modelo$varE
+var_g <- var(modelo$ETA[[2]]$u)
+h2 <- var_g / (var_g + var_e)
+
+comp_y <- data.frame(G = var_g,
+                     e = var_e,
+                     herd = h2,
+                     trait = "yield")
+
+load("POLY_Protein_G.rda")
+
+var_e <- modelo$varE
+var_g <- var(modelo$ETA[[2]]$u)
+h2 <- var_g / (var_g + var_e)
+
+comp_p <- data.frame(G = var_g,
+                     e = var_e,
+                     herd = h2,
+                     trait = "protein")
+
+load("POLY_Oil_G.rda")
+
+var_e <- modelo$varE
+var_g <- var(modelo$ETA[[2]]$u)
+h2 <- var_g / (var_g + var_e)
+
+comp_o <- data.frame(G = var_g,
+                     e = var_e,
+                     herd = h2,
+                     trait = "oil")
+
+poly <- rbind(comp_y, comp_p, comp_o)
+
+poly$model <- "Polynomial"
+poly$eff <- "Main Effects"
+
+data <- rbind(gblup, lpc, gauss, bsl, poly)
+
+writexl::write_xlsx(data, "VarCompG.xlsx")
+```
+
+# Y = E + G + GxE + e
+
+## GBLUP
+
+### Yield
+
+```{r}
+load("EZ.rda")
+load("GDec.rda")
+load("GxEDec.rda")
+
+y <- readxl::read_excel("Y_CV.xlsx") %>% pull(yield)
+
+ETA <- list(
+  list(X = EZ, model = "FIXED"),
+  list(V = GDec$vectors, d = GDec$values, model = "RKHS"),
+  list(V = GxEDec$vectors, d = GxEDec$values, model = 'RKHS')
+)
+
+set.seed(1)
+
+modelo <- BGLR(
+  y = y,
+  ETA = ETA,
+  nIter = 20000,
+  burnIn = 5000,
+  verbose = FALSE
+)
+
+save(modelo, file = "GBLUP_Yield_GxE.rda")
+
+rm(list = ls())
+```
+
+### Protein
+
+```{r}
+load("EZ.rda")
+load("GDec.rda")
+load("GxEDec.rda")
+
+y <- readxl::read_excel("Y_CV.xlsx") %>% pull(protein)
+
+ETA <- list(
+  list(X = EZ, model = "FIXED"),
+  list(V = GDec$vectors, d = GDec$values, model = "RKHS"),
+  list(V = GxEDec$vectors, d = GxEDec$values, model = 'RKHS')
+)
+
+set.seed(1)
+
+modelo <- BGLR(
+  y = y,
+  ETA = ETA,
+  nIter = 20000,
+  burnIn = 5000,
+  verbose = FALSE
+)
+
+save(modelo, file = "GBLUP_Protein_GxE.rda")
+
+rm(list = ls())
+```
+
+### Oil
+
+```{r}
+load("EZ.rda")
+load("GDec.rda")
+load("GxEDec.rda")
+
+y <- readxl::read_excel("Y_CV.xlsx") %>% pull(oil)
+
+ETA <- list(
+  list(X = EZ, model = "FIXED"),
+  list(V = GDec$vectors, d = GDec$values, model = "RKHS"),
+  list(V = GxEDec$vectors, d = GxEDec$values, model = 'RKHS')
+)
+
+set.seed(1)
+
+modelo <- BGLR(
+  y = y,
+  ETA = ETA,
+  nIter = 20000,
+  burnIn = 5000,
+  verbose = FALSE
+)
+
+save(modelo, file = "GBLUP_Oil_GxE.rda")
+
+rm(list = ls())
+```
+
+## Laplacian
+
+### Yield
+
+```{r}
+load("EZ.rda")
+load("GDec_lpc.rda")
+load("GxEDec_lpc.rda")
+
+y <- readxl::read_excel("Y_CV.xlsx") %>% pull(yield)
+
+ETA <- list(
+  list(X = EZ, model = "FIXED"),
+  list(V = GDec$vectors, d = GDec$values, model = "RKHS"),
+  list(V = GxEDec$vectors, d = GxEDec$values, model = 'RKHS')
+)
+
+set.seed(1)
+
+modelo <- BGLR(
+  y = y,
+  ETA = ETA,
+  nIter = 20000,
+  burnIn = 5000,
+  verbose = FALSE
+)
+
+save(modelo, file = "LPC_Yield_GxE.rda")
+
+rm(list = ls())
+```
+
+### Protein
+
+```{r}
+load("EZ.rda")
+load("GDec_lpc.rda")
+load("GxEDec_lpc.rda")
+
+y <- readxl::read_excel("Y_CV.xlsx") %>% pull(protein)
+
+ETA <- list(
+  list(X = EZ, model = "FIXED"),
+  list(V = GDec$vectors, d = GDec$values, model = "RKHS"),
+  list(V = GxEDec$vectors, d = GxEDec$values, model = 'RKHS')
+)
+
+set.seed(1)
+
+modelo <- BGLR(
+  y = y,
+  ETA = ETA,
+  nIter = 20000,
+  burnIn = 5000,
+  verbose = FALSE
+)
+
+save(modelo, file = "LPC_Protein_GxE.rda")
+
+rm(list = ls())
+```
+
+### Oil
+
+```{r}
+load("EZ.rda")
+load("GDec_lpc.rda")
+load("GxEDec_lpc.rda")
+
+y <- readxl::read_excel("Y_CV.xlsx") %>% pull(oil)
+
+ETA <- list(
+  list(X = EZ, model = "FIXED"),
+  list(V = GDec$vectors, d = GDec$values, model = "RKHS"),
+  list(V = GxEDec$vectors, d = GxEDec$values, model = 'RKHS')
+)
+
+set.seed(1)
+
+modelo <- BGLR(
+  y = y,
+  ETA = ETA,
+  nIter = 20000,
+  burnIn = 5000,
+  verbose = FALSE
+)
+
+save(modelo, file = "LPC_Oil_GxE.rda")
+
+rm(list = ls())
+```
+
+## Gaussian
+
+### Yield
+
+```{r}
+load("EZ.rda")
+load("GDec_gauss.rda")
+load("GxEDec_gauss.rda")
+
+y <- readxl::read_excel("Y_CV.xlsx") %>% pull(yield)
+
+ETA <- list(
+  list(X = EZ, model = "FIXED"),
+  list(V = GDec$vectors, d = GDec$values, model = "RKHS"),
+  list(V = GxEDec$vectors, d = GxEDec$values, model = 'RKHS')
+)
+
+set.seed(1)
+
+modelo <- BGLR(
+  y = y,
+  ETA = ETA,
+  nIter = 20000,
+  burnIn = 5000,
+  verbose = FALSE
+)
+
+save(modelo, file = "GAUSS_Yield_GxE.rda")
+
+rm(list = ls())
+```
+
+### Protein
+
+```{r}
+load("EZ.rda")
+load("GDec_gauss.rda")
+load("GxEDec_gauss.rda")
+
+y <- readxl::read_excel("Y_CV.xlsx") %>% pull(protein)
+
+ETA <- list(
+  list(X = EZ, model = "FIXED"),
+  list(V = GDec$vectors, d = GDec$values, model = "RKHS"),
+  list(V = GxEDec$vectors, d = GxEDec$values, model = 'RKHS')
+)
+
+set.seed(1)
+
+modelo <- BGLR(
+  y = y,
+  ETA = ETA,
+  nIter = 20000,
+  burnIn = 5000,
+  verbose = FALSE
+)
+
+save(modelo, file = "GAUSS_Protein_GxE.rda")
+
+rm(list = ls())
+```
+
+### Oil
+
+```{r}
+load("EZ.rda")
+load("GDec_gauss.rda")
+load("GxEDec_gauss.rda")
+
+y <- readxl::read_excel("Y_CV.xlsx") %>% pull(oil)
+
+ETA <- list(
+  list(X = EZ, model = "FIXED"),
+  list(V = GDec$vectors, d = GDec$values, model = "RKHS"),
+  list(V = GxEDec$vectors, d = GxEDec$values, model = 'RKHS')
+)
+
+set.seed(1)
+
+modelo <- BGLR(
+  y = y,
+  ETA = ETA,
+  nIter = 20000,
+  burnIn = 5000,
+  verbose = FALSE
+)
+
+save(modelo, file = "GAUSS_Oil_GxE.rda")
+
+rm(list = ls())
+```
+
+## Bessel
+
+### Yield
+
+```{r}
+load("EZ.rda")
+load("GDec_bsl.rda")
+load("GxEDec_bsl.rda")
+
+y <- readxl::read_excel("Y_CV.xlsx") %>% pull(yield)
+
+ETA <- list(
+  list(X = EZ, model = "FIXED"),
+  list(V = GDec$vectors, d = GDec$values, model = "RKHS"),
+  list(V = GxEDec$vectors, d = GxEDec$values, model = 'RKHS')
+)
+
+set.seed(1)
+
+modelo <- BGLR(
+  y = y,
+  ETA = ETA,
+  nIter = 20000,
+  burnIn = 5000,
+  verbose = FALSE
+)
+
+save(modelo, file = "BSL_Yield_GxE.rda")
+
+rm(list = ls())
+```
+
+### Protein
+
+```{r}
+load("EZ.rda")
+load("GDec_bsl.rda")
+load("GxEDec_bsl.rda")
+
+y <- readxl::read_excel("Y_CV.xlsx") %>% pull(protein)
+
+ETA <- list(
+  list(X = EZ, model = "FIXED"),
+  list(V = GDec$vectors, d = GDec$values, model = "RKHS"),
+  list(V = GxEDec$vectors, d = GxEDec$values, model = 'RKHS')
+)
+
+set.seed(1)
+
+modelo <- BGLR(
+  y = y,
+  ETA = ETA,
+  nIter = 20000,
+  burnIn = 5000,
+  verbose = FALSE
+)
+
+save(modelo, file = "BSL_Protein_GxE.rda")
+
+rm(list = ls())
+```
+
+### Oil
+
+```{r}
+load("EZ.rda")
+load("GDec_bsl.rda")
+load("GxEDec_bsl.rda")
+
+y <- readxl::read_excel("Y_CV.xlsx") %>% pull(oil)
+
+ETA <- list(
+  list(X = EZ, model = "FIXED"),
+  list(V = GDec$vectors, d = GDec$values, model = "RKHS"),
+  list(V = GxEDec$vectors, d = GxEDec$values, model = 'RKHS')
+)
+
+set.seed(1)
+
+modelo <- BGLR(
+  y = y,
+  ETA = ETA,
+  nIter = 20000,
+  burnIn = 5000,
+  verbose = FALSE
+)
+
+save(modelo, file = "BSL_Oil_GxE.rda")
+
+rm(list = ls())
+```
+
+## Polynomial
+
+### Yield
+
+```{r}
+load("EZ.rda")
+load("GDec_poly.rda")
+load("GxEDec_poly.rda")
+
+y <- readxl::read_excel("Y_CV.xlsx") %>% pull(yield)
+
+ETA <- list(
+  list(X = EZ, model = "FIXED"),
+  list(V = GDec$vectors, d = GDec$values, model = "RKHS"),
+  list(V = GxEDec$vectors, d = GxEDec$values, model = 'RKHS')
+)
+
+set.seed(1)
+
+modelo <- BGLR(
+  y = y,
+  ETA = ETA,
+  nIter = 20000,
+  burnIn = 5000,
+  verbose = FALSE
+)
+
+save(modelo, file = "POLY_Yield_GxE.rda")
+
+rm(list = ls())
+```
+
+### Protein
+
+```{r}
+load("EZ.rda")
+load("GDec_poly.rda")
+load("GxEDec_poly.rda")
+
+y <- readxl::read_excel("Y_CV.xlsx") %>% pull(protein)
+
+ETA <- list(
+  list(X = EZ, model = "FIXED"),
+  list(V = GDec$vectors, d = GDec$values, model = "RKHS"),
+  list(V = GxEDec$vectors, d = GxEDec$values, model = 'RKHS')
+)
+
+set.seed(1)
+
+modelo <- BGLR(
+  y = y,
+  ETA = ETA,
+  nIter = 20000,
+  burnIn = 5000,
+  verbose = FALSE
+)
+
+save(modelo, file = "POLY_Protein_GxE.rda")
+
+rm(list = ls())
+```
+
+### Oil
+
+```{r}
+load("EZ.rda")
+load("GDec_poly.rda")
+load("GxEDec_poly.rda")
+
+y <- readxl::read_excel("Y_CV.xlsx") %>% pull(oil)
+
+ETA <- list(
+  list(X = EZ, model = "FIXED"),
+  list(V = GDec$vectors, d = GDec$values, model = "RKHS"),
+  list(V = GxEDec$vectors, d = GxEDec$values, model = 'RKHS')
+)
+
+set.seed(1)
+
+modelo <- BGLR(
+  y = y,
+  ETA = ETA,
+  nIter = 20000,
+  burnIn = 5000,
+  verbose = FALSE
+)
+
+save(modelo, file = "POLY_Oil_GxE.rda")
+
+rm(list = ls())
+```
+
+## Components
+
+```{r}
+load("GBLUP_Yield_GxE.rda")
+
+var_e <- modelo$varE
+var_g <- var(modelo$ETA[[2]]$u)
+var_GxE <- var(modelo$ETA[[3]]$u)
+h2 <- var_g / (var_g + var_e + var_GxE)
+
+comp_y <- data.frame(G = var_g,
+                     e = var_e,
+                     GxE = var_GxE,
+                     herd = h2,
+                     trait = "yield")
+
+load("GBLUP_Protein_GxE.rda")
+
+var_e <- modelo$varE
+var_g <- var(modelo$ETA[[2]]$u)
+var_GxE <- var(modelo$ETA[[3]]$u)
+h2 <- var_g / (var_g + var_e + var_GxE)
+
+comp_p <- data.frame(G = var_g,
+                     e = var_e,
+                     GxE = var_GxE,
+                     herd = h2,
+                     trait = "protein")
+
+load("GBLUP_Oil_GxE.rda")
+
+var_e <- modelo$varE
+var_g <- var(modelo$ETA[[2]]$u)
+var_GxE <- var(modelo$ETA[[3]]$u)
+h2 <- var_g / (var_g + var_e + var_GxE)
+
+comp_o <- data.frame(G = var_g,
+                     e = var_e,
+                     GxE = var_GxE,
+                     herd = h2,
+                     trait = "oil")
+
+gblup <- rbind(comp_y, comp_p, comp_o)
+
+gblup$model <- "GBLUP"
+gblup$eff <- "Main and Interaction Effects"
+
+load("LPC_Yield_GxE.rda")
+
+var_e <- modelo$varE
+var_g <- var(modelo$ETA[[2]]$u)
+var_GxE <- var(modelo$ETA[[3]]$u)
+h2 <- var_g / (var_g + var_e + var_GxE)
+
+comp_y <- data.frame(G = var_g,
+                     e = var_e,
+                     GxE = var_GxE,
+                     herd = h2,
+                     trait = "yield")
+
+load("LPC_Protein_GxE.rda")
+
+var_e <- modelo$varE
+var_g <- var(modelo$ETA[[2]]$u)
+var_GxE <- var(modelo$ETA[[3]]$u)
+h2 <- var_g / (var_g + var_e + var_GxE)
+
+comp_p <- data.frame(G = var_g,
+                     e = var_e,
+                     GxE = var_GxE,
+                     herd = h2,
+                     trait = "protein")
+
+load("LPC_Oil_GxE.rda")
+
+var_e <- modelo$varE
+var_g <- var(modelo$ETA[[2]]$u)
+var_GxE <- var(modelo$ETA[[3]]$u)
+h2 <- var_g / (var_g + var_e + var_GxE)
+
+comp_o <- data.frame(G = var_g,
+                     e = var_e,
+                     GxE = var_GxE,
+                     herd = h2,
+                     trait = "oil")
+
+lpc <- rbind(comp_y, comp_p, comp_o)
+
+lpc$model <- "Laplacian"
+lpc$eff <- "Main and Interaction Effects"
+
+load("GAUSS_Yield_GxE.rda")
+
+var_e <- modelo$varE
+var_g <- var(modelo$ETA[[2]]$u)
+var_GxE <- var(modelo$ETA[[3]]$u)
+h2 <- var_g / (var_g + var_e + var_GxE)
+
+comp_y <- data.frame(G = var_g,
+                     e = var_e,
+                     GxE = var_GxE,
+                     herd = h2,
+                     trait = "yield")
+
+load("GAUSS_Protein_GxE.rda")
+
+var_e <- modelo$varE
+var_g <- var(modelo$ETA[[2]]$u)
+var_GxE <- var(modelo$ETA[[3]]$u)
+h2 <- var_g / (var_g + var_e + var_GxE)
+
+comp_p <- data.frame(G = var_g,
+                     e = var_e,
+                     GxE = var_GxE,
+                     herd = h2,
+                     trait = "protein")
+
+load("GAUSS_Oil_GxE.rda")
+
+var_e <- modelo$varE
+var_g <- var(modelo$ETA[[2]]$u)
+var_GxE <- var(modelo$ETA[[3]]$u)
+h2 <- var_g / (var_g + var_e + var_GxE)
+
+comp_o <- data.frame(G = var_g,
+                     e = var_e,
+                     GxE = var_GxE,
+                     herd = h2,
+                     trait = "oil")
+
+gauss <- rbind(comp_y, comp_p, comp_o)
+
+gauss$model <- "Gaussian"
+gauss$eff <- "Main and Interaction Effects"
+
+load("BSL_Yield_GxE.rda")
+
+var_e <- modelo$varE
+var_g <- var(modelo$ETA[[2]]$u)
+var_GxE <- var(modelo$ETA[[3]]$u)
+h2 <- var_g / (var_g + var_e + var_GxE)
+
+comp_y <- data.frame(G = var_g,
+                     e = var_e,
+                     GxE = var_GxE,
+                     herd = h2,
+                     trait = "yield")
+
+load("BSL_Protein_GxE.rda")
+
+var_e <- modelo$varE
+var_g <- var(modelo$ETA[[2]]$u)
+var_GxE <- var(modelo$ETA[[3]]$u)
+h2 <- var_g / (var_g + var_e + var_GxE)
+
+comp_p <- data.frame(G = var_g,
+                     e = var_e,
+                     GxE = var_GxE,
+                     herd = h2,
+                     trait = "protein")
+
+load("BSL_Oil_GxE.rda")
+
+var_e <- modelo$varE
+var_g <- var(modelo$ETA[[2]]$u)
+var_GxE <- var(modelo$ETA[[3]]$u)
+h2 <- var_g / (var_g + var_e + var_GxE)
+
+comp_o <- data.frame(G = var_g,
+                     e = var_e,
+                     GxE = var_GxE,
+                     herd = h2,
+                     trait = "oil")
+
+bsl <- rbind(comp_y, comp_p, comp_o)
+
+bsl$model <- "Bessel"
+bsl$eff <- "Main and Interaction Effects"
+
+load("POLY_Yield_GxE.rda")
+
+var_e <- modelo$varE
+var_g <- var(modelo$ETA[[2]]$u)
+var_GxE <- var(modelo$ETA[[3]]$u)
+h2 <- var_g / (var_g + var_e + var_GxE)
+
+comp_y <- data.frame(G = var_g,
+                     e = var_e,
+                     GxE = var_GxE,
+                     herd = h2,
+                     trait = "yield")
+
+load("POLY_Protein_GxE.rda")
+
+var_e <- modelo$varE
+var_g <- var(modelo$ETA[[2]]$u)
+var_GxE <- var(modelo$ETA[[3]]$u)
+h2 <- var_g / (var_g + var_e + var_GxE)
+
+comp_p <- data.frame(G = var_g,
+                     e = var_e,
+                     GxE = var_GxE,
+                     herd = h2,
+                     trait = "protein")
+
+load("POLY_Oil_GxE.rda")
+
+var_e <- modelo$varE
+var_g <- var(modelo$ETA[[2]]$u)
+var_GxE <- var(modelo$ETA[[3]]$u)
+h2 <- var_g / (var_g + var_e + var_GxE)
+
+comp_o <- data.frame(G = var_g,
+                     e = var_e,
+                     GxE = var_GxE,
+                     herd = h2,
+                     trait = "oil")
+
+poly <- rbind(comp_y, comp_p, comp_o)
+
+poly$model <- "Polynomial"
+poly$eff <- "Main and Interaction Effects"
+
+data <- rbind(gblup, lpc, gauss, bsl, poly)
+
+writexl::write_xlsx(data, "VarCompGxE.xlsx")
+```

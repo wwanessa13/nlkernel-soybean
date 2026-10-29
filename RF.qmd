@@ -1,0 +1,719 @@
+---
+title: "Random Forest"
+format: html
+execute:
+  eval: false
+editor: visual
+---
+
+```{r}
+library(tidyverse)
+library(readxl)
+library(ranger)
+
+SNPs <- as.matrix(read.table("gen.txt", h = TRUE, sep = ","))
+
+Y <- read_excel("Y_CV.xlsx")
+```
+
+## CV1
+
+```{r}
+folds  <- 1:5
+```
+
+### Yield
+
+```{r}
+yield <- Y$yield
+env <- Y$environ
+IDs <- Y$strain
+uenv <- unique(env)
+
+X_markers <- SNPs[IDs, ]
+
+data_rf <- data.frame(
+  yield = yield,
+  environ = as.factor(env),
+  X_markers,
+  check.names = FALSE
+)
+
+colnames(data_rf) <- make.names(colnames(data_rf))
+
+set.seed(1)
+
+metric_list <- list()
+
+for (fold in folds) {
+  
+  cat("  Fold Processing", fold, "\n")
+  
+  testing <- which(Y$CV1 == fold)
+  training <- setdiff(seq_len(nrow(Y)), testing)
+  
+  rf_fit <- ranger(
+    yield ~ .,
+    data = data_rf[training, ],
+    num.trees = 500,
+    importance = "none"
+  )
+  
+  yHat <- rep(NA, length(yield))
+  yHat[testing] <- predict(
+    rf_fit,
+    data = data_rf[testing, ]
+  )$predictions
+  
+  for (a in uenv) {
+    
+    idx_env <- which(env == a)
+    set <- intersect(idx_env, testing)
+    
+    if (length(set) > 1) {
+      
+      cor_val <- cor(yHat[set], yield[set],
+                     use = "complete.obs")
+      
+      metric_list[[length(metric_list) + 1]] <-
+        data.frame(
+          Fold = fold,
+          Environment = a,
+          Predictive_Capacity = cor_val
+        )
+    }
+  }
+}
+
+df_metricas <- bind_rows(metric_list)
+
+df_metrics <- df_metricas %>%
+  group_by(Environment) %>%
+  summarise(
+    pred = mean(Predictive_Capacity),
+    sd = sd(Predictive_Capacity),
+    .groups = "drop"
+  )
+
+writexl::write_xlsx(df_metrics, "RF_CV1_Yield.xlsx")
+```
+
+### Protein
+
+```{r}
+protein <- Y$protein
+env <- Y$environ
+IDs <- Y$strain
+uenv <- unique(env)
+
+X_markers <- SNPs[IDs, ]
+
+data_rf <- data.frame(
+  protein = protein,
+  environ = as.factor(env),
+  X_markers,
+  check.names = FALSE
+)
+
+colnames(data_rf) <- make.names(colnames(data_rf))
+
+set.seed(1)
+
+metric_list <- list()
+
+for (fold in folds) {
+  
+  cat("  Fold Processing", fold, "\n")
+  
+  testing <- which(Y$CV1 == fold)
+  training <- setdiff(seq_len(nrow(Y)), testing)
+  
+  rf_fit <- ranger(
+    protein ~ .,
+    data = data_rf[training, ],
+    num.trees = 500,
+    importance = "none"
+  )
+  
+  yHat <- rep(NA, length(protein))
+  yHat[testing] <- predict(
+    rf_fit,
+    data = data_rf[testing, ]
+  )$predictions
+  
+  for (a in uenv) {
+    
+    idx_env <- which(env == a)
+    set <- intersect(idx_env, testing)
+    
+    if (length(set) > 1) {
+      
+      cor_val <- cor(yHat[set], protein[set],
+                     use = "complete.obs")
+      
+      metric_list[[length(metric_list) + 1]] <-
+        data.frame(
+          Fold = fold,
+          Environment = a,
+          Predictive_Capacity = cor_val
+        )
+    }
+  }
+}
+
+df_metricas <- bind_rows(metric_list)
+
+df_metrics <- df_metricas %>%
+  group_by(Environment) %>%
+  summarise(
+    pred = mean(Predictive_Capacity),
+    sd = sd(Predictive_Capacity),
+    .groups = "drop"
+  )
+
+writexl::write_xlsx(df_metrics, "RF_CV1_Protein.xlsx")
+```
+
+### Oil
+
+```{r}
+oil <- Y$oil
+env <- Y$environ
+IDs <- Y$strain
+uenv <- unique(env)
+
+X_markers <- SNPs[IDs, ]
+
+data_rf <- data.frame(
+  oil = oil,
+  environ = as.factor(env),
+  X_markers,
+  check.names = FALSE
+)
+
+colnames(data_rf) <- make.names(colnames(data_rf))
+
+set.seed(1)
+
+metric_list <- list()
+
+for (fold in folds) {
+  
+  cat("  Fold Processing", fold, "\n")
+  
+  testing <- which(Y$CV1 == fold)
+  training <- setdiff(seq_len(nrow(Y)), testing)
+  
+  rf_fit <- ranger(
+    oil ~ .,
+    data = data_rf[training, ],
+    num.trees = 500,
+    importance = "none"
+  )
+  
+  yHat <- rep(NA, length(oil))
+  yHat[testing] <- predict(
+    rf_fit,
+    data = data_rf[testing, ]
+  )$predictions
+  
+  for (a in uenv) {
+    
+    idx_env <- which(env == a)
+    set <- intersect(idx_env, testing)
+    
+    if (length(set) > 1) {
+      
+      cor_val <- cor(yHat[set], oil[set],
+                     use = "complete.obs")
+      
+      metric_list[[length(metric_list) + 1]] <-
+        data.frame(
+          Fold = fold,
+          Environment = a,
+          Predictive_Capacity = cor_val
+        )
+    }
+  }
+}
+
+df_metricas <- bind_rows(metric_list)
+
+df_metrics <- df_metricas %>%
+  group_by(Environment) %>%
+  summarise(
+    pred = mean(Predictive_Capacity),
+    sd = sd(Predictive_Capacity),
+    .groups = "drop"
+  )
+
+writexl::write_xlsx(df_metrics, "RF_CV1_Oil.xlsx")
+```
+
+## CV2
+
+```{r}
+folds  <- 1:5
+```
+
+### Yield
+
+```{r}
+yield <- Y$yield
+env <- Y$environ
+IDs <- Y$strain
+uenv <- unique(env)
+
+X_markers <- SNPs[IDs, ]
+
+data_rf <- data.frame(
+  yield = yield,
+  environ = as.factor(env),
+  X_markers,
+  check.names = FALSE
+)
+
+colnames(data_rf) <- make.names(colnames(data_rf))
+
+set.seed(1)
+
+metric_list <- list()
+
+for (fold in folds) {
+  
+  cat("  Fold Processing", fold, "\n")
+  
+  testing <- which(Y$CV2 == fold)
+  training <- setdiff(seq_len(nrow(Y)), testing)
+  
+  rf_fit <- ranger(
+    yield ~ .,
+    data = data_rf[training, ],
+    num.trees = 500,
+    importance = "none"
+  )
+  
+  yHat <- rep(NA, length(yield))
+  yHat[testing] <- predict(
+    rf_fit,
+    data = data_rf[testing, ]
+  )$predictions
+  
+  for (a in uenv) {
+    
+    idx_env <- which(env == a)
+    set <- intersect(idx_env, testing)
+    
+    if (length(set) > 1) {
+      
+      cor_val <- cor(yHat[set], yield[set],
+                     use = "complete.obs")
+      
+      metric_list[[length(metric_list) + 1]] <-
+        data.frame(
+          Fold = fold,
+          Environment = a,
+          Predictive_Capacity = cor_val
+        )
+    }
+  }
+}
+
+df_metricas <- bind_rows(metric_list)
+
+df_metrics <- df_metricas %>%
+  group_by(Environment) %>%
+  summarise(
+    pred = mean(Predictive_Capacity),
+    sd = sd(Predictive_Capacity),
+    .groups = "drop"
+  )
+
+writexl::write_xlsx(df_metrics, "RF_CV2_Yield.xlsx")
+```
+
+### Protein
+
+```{r}
+protein <- Y$protein
+env <- Y$environ
+IDs <- Y$strain
+uenv <- unique(env)
+
+X_markers <- SNPs[IDs, ]
+
+data_rf <- data.frame(
+  protein = protein,
+  environ = as.factor(env),
+  X_markers,
+  check.names = FALSE
+)
+
+colnames(data_rf) <- make.names(colnames(data_rf))
+
+set.seed(1)
+
+metric_list <- list()
+
+for (fold in folds) {
+  
+  cat("  Fold Processing", fold, "\n")
+  
+  testing <- which(Y$CV2 == fold)
+  training <- setdiff(seq_len(nrow(Y)), testing)
+  
+  rf_fit <- ranger(
+    protein ~ .,
+    data = data_rf[training, ],
+    num.trees = 500,
+    importance = "none"
+  )
+  
+  yHat <- rep(NA, length(protein))
+  yHat[testing] <- predict(
+    rf_fit,
+    data = data_rf[testing, ]
+  )$predictions
+  
+  for (a in uenv) {
+    
+    idx_env <- which(env == a)
+    set <- intersect(idx_env, testing)
+    
+    if (length(set) > 1) {
+      
+      cor_val <- cor(yHat[set], protein[set],
+                     use = "complete.obs")
+      
+      metric_list[[length(metric_list) + 1]] <-
+        data.frame(
+          Fold = fold,
+          Environment = a,
+          Predictive_Capacity = cor_val
+        )
+    }
+  }
+}
+
+df_metricas <- bind_rows(metric_list)
+
+df_metrics <- df_metricas %>%
+  group_by(Environment) %>%
+  summarise(
+    pred = mean(Predictive_Capacity),
+    sd = sd(Predictive_Capacity),
+    .groups = "drop"
+  )
+
+writexl::write_xlsx(df_metrics, "RF_CV2_Protein.xlsx")
+```
+
+### Oil
+
+```{r}
+oil <- Y$oil
+env <- Y$environ
+IDs <- Y$strain
+uenv <- unique(env)
+
+X_markers <- SNPs[IDs, ]
+
+data_rf <- data.frame(
+  oil = oil,
+  environ = as.factor(env),
+  X_markers,
+  check.names = FALSE
+)
+
+colnames(data_rf) <- make.names(colnames(data_rf))
+
+set.seed(1)
+
+metric_list <- list()
+
+for (fold in folds) {
+  
+  cat("  Fold Processing", fold, "\n")
+  
+  testing <- which(Y$CV2 == fold)
+  training <- setdiff(seq_len(nrow(Y)), testing)
+  
+  rf_fit <- ranger(
+    oil ~ .,
+    data = data_rf[training, ],
+    num.trees = 500,
+    importance = "none"
+  )
+  
+  yHat <- rep(NA, length(oil))
+  yHat[testing] <- predict(
+    rf_fit,
+    data = data_rf[testing, ]
+  )$predictions
+  
+  for (a in uenv) {
+    
+    idx_env <- which(env == a)
+    set <- intersect(idx_env, testing)
+    
+    if (length(set) > 1) {
+      
+      cor_val <- cor(yHat[set], oil[set],
+                     use = "complete.obs")
+      
+      metric_list[[length(metric_list) + 1]] <-
+        data.frame(
+          Fold = fold,
+          Environment = a,
+          Predictive_Capacity = cor_val
+        )
+    }
+  }
+}
+
+df_metricas <- bind_rows(metric_list)
+
+df_metrics <- df_metricas %>%
+  group_by(Environment) %>%
+  summarise(
+    pred = mean(Predictive_Capacity),
+    sd = sd(Predictive_Capacity),
+    .groups = "drop"
+  )
+
+writexl::write_xlsx(df_metrics, "RF_CV2_Oil.xlsx")
+```
+
+## CV0
+
+```{r}
+folds  <- 1:6
+```
+
+### Yield
+
+```{r}
+yield <- Y$yield
+env <- Y$environ
+IDs <- Y$strain
+uenv <- unique(env)
+
+X_markers <- SNPs[IDs, ]
+
+data_rf <- data.frame(
+  yield = yield,
+  environ = as.factor(env),
+  X_markers,
+  check.names = FALSE
+)
+
+colnames(data_rf) <- make.names(colnames(data_rf))
+
+set.seed(1)
+
+metric_list <- list()
+
+for (fold in folds) {
+  
+  cat("  Fold Processing", fold, "\n")
+  
+  testing <- which(Y$CV0 == fold)
+  training <- setdiff(seq_len(nrow(Y)), testing)
+  
+  rf_fit <- ranger(
+    yield ~ .,
+    data = data_rf[training, ],
+    num.trees = 500,
+    importance = "none"
+  )
+  
+  yHat <- rep(NA, length(yield))
+  yHat[testing] <- predict(
+    rf_fit,
+    data = data_rf[testing, ]
+  )$predictions
+  
+  for (a in uenv) {
+    
+    idx_env <- which(env == a)
+    set <- intersect(idx_env, testing)
+    
+    if (length(set) > 1) {
+      
+      cor_val <- cor(yHat[set], yield[set],
+                     use = "complete.obs")
+      
+      metric_list[[length(metric_list) + 1]] <-
+        data.frame(
+          Fold = fold,
+          Environment = a,
+          Predictive_Capacity = cor_val
+        )
+    }
+  }
+}
+
+df_metricas <- bind_rows(metric_list)
+
+df_metrics <- df_metricas %>%
+  group_by(Environment) %>%
+  summarise(
+    pred = mean(Predictive_Capacity),
+    sd = sd(Predictive_Capacity),
+    .groups = "drop"
+  )
+
+writexl::write_xlsx(df_metrics, "RF_CV0_Yield.xlsx")
+```
+
+### Protein
+
+```{r}
+protein <- Y$protein
+env <- Y$environ
+IDs <- Y$strain
+uenv <- unique(env)
+
+X_markers <- SNPs[IDs, ]
+
+data_rf <- data.frame(
+  protein = protein,
+  environ = as.factor(env),
+  X_markers,
+  check.names = FALSE
+)
+
+colnames(data_rf) <- make.names(colnames(data_rf))
+
+set.seed(1)
+
+metric_list <- list()
+
+for (fold in folds) {
+  
+  cat("  Fold Processing", fold, "\n")
+  
+  testing <- which(Y$CV0 == fold)
+  training <- setdiff(seq_len(nrow(Y)), testing)
+  
+  rf_fit <- ranger(
+    protein ~ .,
+    data = data_rf[training, ],
+    num.trees = 500,
+    importance = "none"
+  )
+  
+  yHat <- rep(NA, length(protein))
+  yHat[testing] <- predict(
+    rf_fit,
+    data = data_rf[testing, ]
+  )$predictions
+  
+  for (a in uenv) {
+    
+    idx_env <- which(env == a)
+    set <- intersect(idx_env, testing)
+    
+    if (length(set) > 1) {
+      
+      cor_val <- cor(yHat[set], protein[set],
+                     use = "complete.obs")
+      
+      metric_list[[length(metric_list) + 1]] <-
+        data.frame(
+          Fold = fold,
+          Environment = a,
+          Predictive_Capacity = cor_val
+        )
+    }
+  }
+}
+
+df_metricas <- bind_rows(metric_list)
+
+df_metrics <- df_metricas %>%
+  group_by(Environment) %>%
+  summarise(
+    pred = mean(Predictive_Capacity),
+    sd = sd(Predictive_Capacity),
+    .groups = "drop"
+  )
+
+writexl::write_xlsx(df_metrics, "RF_CV0_Protein.xlsx")
+```
+
+### Oil
+
+```{r}
+oil <- Y$oil
+env <- Y$environ
+IDs <- Y$strain
+uenv <- unique(env)
+
+X_markers <- SNPs[IDs, ]
+
+data_rf <- data.frame(
+  oil = oil,
+  environ = as.factor(env),
+  X_markers,
+  check.names = FALSE
+)
+
+colnames(data_rf) <- make.names(colnames(data_rf))
+
+set.seed(1)
+
+metric_list <- list()
+
+for (fold in folds) {
+  
+  cat("  Fold Processing", fold, "\n")
+  
+  testing <- which(Y$CV0 == fold)
+  training <- setdiff(seq_len(nrow(Y)), testing)
+  
+  rf_fit <- ranger(
+    oil ~ .,
+    data = data_rf[training, ],
+    num.trees = 500,
+    importance = "none"
+  )
+  
+  yHat <- rep(NA, length(oil))
+  yHat[testing] <- predict(
+    rf_fit,
+    data = data_rf[testing, ]
+  )$predictions
+  
+  for (a in uenv) {
+    
+    idx_env <- which(env == a)
+    set <- intersect(idx_env, testing)
+    
+    if (length(set) > 1) {
+      
+      cor_val <- cor(yHat[set], oil[set],
+                     use = "complete.obs")
+      
+      metric_list[[length(metric_list) + 1]] <-
+        data.frame(
+          Fold = fold,
+          Environment = a,
+          Predictive_Capacity = cor_val
+        )
+    }
+  }
+}
+
+df_metricas <- bind_rows(metric_list)
+
+df_metrics <- df_metricas %>%
+  group_by(Environment) %>%
+  summarise(
+    pred = mean(Predictive_Capacity),
+    sd = sd(Predictive_Capacity),
+    .groups = "drop"
+  )
+
+writexl::write_xlsx(df_metrics, "RF_CV0_Oil.xlsx")
+```

@@ -1,0 +1,53 @@
+---
+title: "Introduction"
+format: html
+editor: visual
+---
+
+```{=html}
+<style>
+p {
+  text-align: justify;
+}
+</style>
+```
+
+This repository contains all the scripts and documentation to reproduce the analysis of the paper **Non-linear Kernel Methods for Genomic Prediction of Soybean Yield and Quality in Multi-Environment Trials**.
+
+*Authors:*
+
+[Wanessa Alves Lima Paiva](https://orcid.org/0009-0002-4811-8465)
+
+[Weverton Gomes da Costa](https://orcid.org/0000-0003-0742-5936)
+
+[Leandro Pacheco Machado](https://orcid.org/0009-0005-2252-773X)
+
+[Ana Carolina Campana Nascimento](https://orcid.org/0000-0002-6985-1490)
+
+[Diego Jarquin](https://orcid.org/0000-0002-5098-2060)
+
+[Moyses Nascimento](https://orcid.org/0000-0001-5886-9540)
+
+*Abstract:*
+
+Soybean key traits such as Grain Yield, Protein content, and Oil content exhibit strong non-linear effects, including epistasis and genotype-by-environment interactions (GEI). Hence, making kernel-based genomic prediction (GP) models ideal candidates to be more effective than linear conventional approaches like Genomic Best Linear Unbiased Predictor (GBLUP). In this study, we analyzed Grain Yield and seed quality in SoyNAM dataset, composed of 1,379 genotypes evaluated across six environments, to compare non-linear kernel methods (Laplacian, Gaussian, Bessel, and Polynomial) to the GBLUP model. Considering two variance structures, main effects only and main and interaction effects, we evaluated the predictive ability of models under three cross-validation scenarios: CV1, predicting untested genotypes in observed environments; CV2, predicting tested genotypes in observed environments; and CV0, predicting tested genotypes in novel environments. We also compared the models with Random Forest and evaluated the same models on an additional dataset containing traits with epistatic effects.
+
+The datasets provided from: [Ray, Jarquin and Howard (2023)](https://doi.org/10.1002/tpg2.20263) and [Costa et al. (2026)](https://doi.org/10.3390/ijpb17010006).
+
+The codes are organized in the following tabs:
+
+\- [**Data Preparation**](Variance%20Components.qmd): script to build genomic matrices and cross validation scenarios.
+
+\- [**Hyperparameter Tuning**](Hyperparameter%20Tuning.qmd): script to tune the hyperparameters of non linear kernels.
+
+\- [**Variance Components**](Variance%20Components.qmd): script to estimate variance components of the models.
+
+\- [**Models**](Main%20model.qmd): scripts to fit models under two frameworks:
+
+- Main effects
+
+- Main and interaction effects
+
+\- [**Random Forest**](RF.qmd): scripts to fit Random Forest.
+
+\- [**Additional Dataset**](Additional%20Dataset.qmd): scripts to fit models under epistasis dataset.

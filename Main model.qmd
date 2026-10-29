@@ -1,0 +1,2977 @@
+---
+title: "Main effects models"
+format: html
+execute: 
+  eval: false
+editor: visual
+---
+
+```{r}
+library(tidyverse)
+library(BGLR)
+
+Y <- readxl::read_excel("Y_CV.xlsx")
+
+nIter <- 20000
+burnIn <- 5000
+```
+
+# GBLUP
+
+```{r}
+load("EZ.rda")
+load("GDec.rda")
+```
+
+## CV1
+
+```{r}
+folds  <- 1:5
+```
+
+### Yield
+
+```{r}
+yield <- Y$yield
+env <- Y$environ
+uenv <- unique(env)
+
+set.seed(1)
+
+ETA <- list(
+  list(X = EZ, model = "FIXED"),
+  list(V = GDec$vectors, d = GDec$values, model = "RKHS")
+)
+
+list_metrics <- list()
+
+for (fold in folds) {
+  
+  cat("  Processing Fold", fold, "\n")
+  
+  testing <- which(Y$CV1 == fold)
+
+  yNA <- yield
+  yNA[testing] <- NA
+  
+  fm <- BGLR(
+    y = yNA,
+    ETA = ETA,
+    nIter = nIter,
+    burnIn = burnIn,
+    verbose = FALSE
+  )
+  
+  yHat <- fm$yHat
+  
+  for (a in uenv) {
+    
+    idx_env  <- which(env == a)
+    join <- intersect(idx_env, testing)
+    
+    if (length(join) > 1) {
+      
+      cor_val <- cor(yHat[join], yield[join])
+      
+      list_metrics[[length(list_metrics) + 1]] <-
+        data.frame(
+          Fold = fold,
+          Environment = a,
+          Predictive_Capacity = cor_val
+        )
+    }
+  }
+}
+
+df_metricas <- do.call(rbind, list_metrics)
+
+df_metrics <- bind_rows(list_metrics) %>% 
+  group_by(Environment) %>% 
+  summarise(pred = mean(Predictive_Capacity), sd = sd(Predictive_Capacity), .groups = "drop")
+
+writexl::write_xlsx(df_metrics, "GBLUP_CV1_Yield.xlsx")
+```
+
+### Protein
+
+```{r}
+protein <- Y$protein
+env <- Y$environ
+uenv <- unique(env)
+
+set.seed(1)
+
+ETA <- list(
+  list(X = EZ, model = "FIXED"),
+  list(V = GDec$vectors, d = GDec$values, model = "RKHS")
+)
+
+list_metrics <- list()
+
+for (fold in folds) {
+  
+  cat("  Processing Fold", fold, "\n")
+  
+  testing <- which(Y$CV1 == fold)
+
+  yNA <- protein
+  yNA[testing] <- NA
+  
+  fm <- BGLR(
+    y = yNA,
+    ETA = ETA,
+    nIter = nIter,
+    burnIn = burnIn,
+    verbose = FALSE
+  )
+  
+  yHat <- fm$yHat
+  
+  for (a in uenv) {
+    
+    idx_env  <- which(env == a)
+    join <- intersect(idx_env, testing)
+    
+    if (length(join) > 1) {
+      
+      cor_val <- cor(yHat[join], protein[join])
+      
+      list_metrics[[length(list_metrics) + 1]] <-
+        data.frame(
+          Fold = fold,
+          Environment = a,
+          Predictive_Capacity = cor_val
+        )
+    }
+  }
+}
+
+df_metricas <- do.call(rbind, list_metrics)
+
+df_metrics <- bind_rows(list_metrics) %>% 
+  group_by(Environment) %>% 
+  summarise(pred = mean(Predictive_Capacity), sd = sd(Predictive_Capacity), .groups = "drop")
+
+writexl::write_xlsx(df_metrics, "GBLUP_CV1_Protein.xlsx")
+```
+
+### Oil
+
+```{r}
+oil <- Y$oil
+env <- Y$environ
+uenv <- unique(env)
+
+set.seed(1)
+
+ETA <- list(
+  list(X = EZ, model = "FIXED"),
+  list(V = GDec$vectors, d = GDec$values, model = "RKHS")
+)
+
+list_metrics <- list()
+
+for (fold in folds) {
+  
+  cat("  Processing Fold", fold, "\n")
+  
+  testing <- which(Y$CV1 == fold)
+
+  yNA <- oil
+  yNA[testing] <- NA
+  
+  fm <- BGLR(
+    y = yNA,
+    ETA = ETA,
+    nIter = nIter,
+    burnIn = burnIn,
+    verbose = FALSE
+  )
+  
+  yHat <- fm$yHat
+  
+  for (a in uenv) {
+    
+    idx_env  <- which(env == a)
+    join <- intersect(idx_env, testing)
+    
+    if (length(join) > 1) {
+      
+      cor_val <- cor(yHat[join], oil[join])
+      
+      list_metrics[[length(list_metrics) + 1]] <-
+        data.frame(
+          Fold = fold,
+          Environment = a,
+          Predictive_Capacity = cor_val
+        )
+    }
+  }
+}
+
+df_metricas <- do.call(rbind, list_metrics)
+
+df_metrics <- bind_rows(list_metrics) %>% 
+  group_by(Environment) %>% 
+  summarise(pred = mean(Predictive_Capacity), sd = sd(Predictive_Capacity), .groups = "drop")
+
+writexl::write_xlsx(df_metrics, "GBLUP_CV1_Oil.xlsx")
+```
+
+## CV2
+
+```{r}
+folds  <- 1:5
+```
+
+### Yield
+
+```{r}
+yield <- Y$yield
+env <- Y$environ
+uenv <- unique(env)
+
+set.seed(1)
+
+ETA <- list(
+  list(X = EZ, model = "FIXED"),
+  list(V = GDec$vectors, d = GDec$values, model = "RKHS")
+)
+
+list_metrics <- list()
+
+for (fold in folds) {
+  
+  cat("  Processing Fold", fold, "\n")
+  
+  testing <- which(Y$CV2 == fold)
+
+  yNA <- yield
+  yNA[testing] <- NA
+  
+  fm <- BGLR(
+    y = yNA,
+    ETA = ETA,
+    nIter = nIter,
+    burnIn = burnIn,
+    verbose = FALSE
+  )
+  
+  yHat <- fm$yHat
+  
+  for (a in uenv) {
+    
+    idx_env  <- which(env == a)
+    join <- intersect(idx_env, testing)
+    
+    if (length(join) > 1) {
+      
+      cor_val <- cor(yHat[join], yield[join])
+      
+      list_metrics[[length(list_metrics) + 1]] <-
+        data.frame(
+          Fold = fold,
+          Environment = a,
+          Predictive_Capacity = cor_val
+        )
+    }
+  }
+}
+
+df_metricas <- do.call(rbind, list_metrics)
+
+df_metrics <- bind_rows(list_metrics) %>% 
+  group_by(Environment) %>% 
+  summarise(pred = mean(Predictive_Capacity), sd = sd(Predictive_Capacity), .groups = "drop")
+
+writexl::write_xlsx(df_metrics, "GBLUP_CV2_Yield.xlsx")
+```
+
+### Protein
+
+```{r}
+protein <- Y$protein
+env <- Y$environ
+uenv <- unique(env)
+
+set.seed(1)
+
+ETA <- list(
+  list(X = EZ, model = "FIXED"),
+  list(V = GDec$vectors, d = GDec$values, model = "RKHS")
+)
+
+list_metrics <- list()
+
+for (fold in folds) {
+  
+  cat("  Processing Fold", fold, "\n")
+  
+  testing <- which(Y$CV2 == fold)
+
+  yNA <- protein
+  yNA[testing] <- NA
+  
+  fm <- BGLR(
+    y = yNA,
+    ETA = ETA,
+    nIter = nIter,
+    burnIn = burnIn,
+    verbose = FALSE
+  )
+  
+  yHat <- fm$yHat
+  
+  for (a in uenv) {
+    
+    idx_env  <- which(env == a)
+    join <- intersect(idx_env, testing)
+    
+    if (length(join) > 1) {
+      
+      cor_val <- cor(yHat[join], protein[join])
+      
+      list_metrics[[length(list_metrics) + 1]] <-
+        data.frame(
+          Fold = fold,
+          Environment = a,
+          Predictive_Capacity = cor_val
+        )
+    }
+  }
+}
+
+df_metricas <- do.call(rbind, list_metrics)
+
+df_metrics <- bind_rows(list_metrics) %>% 
+  group_by(Environment) %>% 
+  summarise(pred = mean(Predictive_Capacity), sd = sd(Predictive_Capacity), .groups = "drop")
+
+writexl::write_xlsx(df_metrics, "GBLUP_CV2_Protein.xlsx")
+```
+
+### Oil
+
+```{r}
+oil <- Y$oil
+env <- Y$environ
+uenv <- unique(env)
+
+set.seed(1)
+
+ETA <- list(
+  list(X = EZ, model = "FIXED"),
+  list(V = GDec$vectors, d = GDec$values, model = "RKHS")
+)
+
+list_metrics <- list()
+
+for (fold in folds) {
+  
+  cat("  Processing Fold", fold, "\n")
+  
+  testing <- which(Y$CV2 == fold)
+
+  yNA <- oil
+  yNA[testing] <- NA
+  
+  fm <- BGLR(
+    y = yNA,
+    ETA = ETA,
+    nIter = nIter,
+    burnIn = burnIn,
+    verbose = FALSE
+  )
+  
+  yHat <- fm$yHat
+  
+  for (a in uenv) {
+    
+    idx_env  <- which(env == a)
+    join <- intersect(idx_env, testing)
+    
+    if (length(join) > 1) {
+      
+      cor_val <- cor(yHat[join], oil[join])
+      
+      list_metrics[[length(list_metrics) + 1]] <-
+        data.frame(
+          Fold = fold,
+          Environment = a,
+          Predictive_Capacity = cor_val
+        )
+    }
+  }
+}
+
+df_metricas <- do.call(rbind, list_metrics)
+
+df_metrics <- bind_rows(list_metrics) %>% 
+  group_by(Environment) %>% 
+  summarise(pred = mean(Predictive_Capacity), sd = sd(Predictive_Capacity), .groups = "drop")
+
+writexl::write_xlsx(df_metrics, "GBLUP_CV2_Oil.xlsx")
+```
+
+## CV0
+
+```{r}
+folds  <- 1:6
+```
+
+### Yield
+
+```{r}
+yield <- Y$yield
+env <- Y$environ
+uenv <- unique(env)
+
+set.seed(1)
+
+ETA <- list(
+  list(X = EZ, model = "FIXED"),
+  list(V = GDec$vectors, d = GDec$values, model = "RKHS")
+)
+
+list_metrics <- list()
+
+for (fold in folds) {
+  
+  cat("  Processing Fold", fold, "\n")
+  
+  testing <- which(Y$CV0 == fold)
+
+  yNA <- yield
+  yNA[testing] <- NA
+  
+  fm <- BGLR(
+    y = yNA,
+    ETA = ETA,
+    nIter = nIter,
+    burnIn = burnIn,
+    verbose = FALSE
+  )
+  
+  yHat <- fm$yHat
+  
+  for (a in uenv) {
+    
+    idx_env  <- which(env == a)
+    join <- intersect(idx_env, testing)
+    
+    if (length(join) > 1) {
+      
+      cor_val <- cor(yHat[join], yield[join])
+      
+      list_metrics[[length(list_metrics) + 1]] <-
+        data.frame(
+          Fold = fold,
+          Environment = a,
+          Predictive_Capacity = cor_val
+        )
+    }
+  }
+}
+
+df_metricas <- do.call(rbind, list_metrics)
+
+df_metrics <- bind_rows(list_metrics) %>% 
+  group_by(Environment) %>% 
+  summarise(pred = mean(Predictive_Capacity), sd = sd(Predictive_Capacity), .groups = "drop")
+
+writexl::write_xlsx(df_metrics, "GBLUP_CV0_Yield.xlsx")
+```
+
+### Protein
+
+```{r}
+protein <- Y$protein
+env <- Y$environ
+uenv <- unique(env)
+
+set.seed(1)
+
+ETA <- list(
+  list(X = EZ, model = "FIXED"),
+  list(V = GDec$vectors, d = GDec$values, model = "RKHS")
+)
+
+list_metrics <- list()
+
+for (fold in folds) {
+  
+  cat("  Processing Fold", fold, "\n")
+  
+  testing <- which(Y$CV0 == fold)
+
+  yNA <- protein
+  yNA[testing] <- NA
+  
+  fm <- BGLR(
+    y = yNA,
+    ETA = ETA,
+    nIter = nIter,
+    burnIn = burnIn,
+    verbose = FALSE
+  )
+  
+  yHat <- fm$yHat
+  
+  for (a in uenv) {
+    
+    idx_env  <- which(env == a)
+    join <- intersect(idx_env, testing)
+    
+    if (length(join) > 1) {
+      
+      cor_val <- cor(yHat[join], protein[join])
+      
+      list_metrics[[length(list_metrics) + 1]] <-
+        data.frame(
+          Fold = fold,
+          Environment = a,
+          Predictive_Capacity = cor_val
+        )
+    }
+  }
+}
+
+df_metricas <- do.call(rbind, list_metrics)
+
+df_metrics <- bind_rows(list_metrics) %>% 
+  group_by(Environment) %>% 
+  summarise(pred = mean(Predictive_Capacity), sd = sd(Predictive_Capacity), .groups = "drop")
+
+writexl::write_xlsx(df_metrics, "GBLUP_CV0_Protein.xlsx")
+```
+
+### Oil
+
+```{r}
+oil <- Y$oil
+env <- Y$environ
+uenv <- unique(env)
+
+set.seed(1)
+
+ETA <- list(
+  list(X = EZ, model = "FIXED"),
+  list(V = GDec$vectors, d = GDec$values, model = "RKHS")
+)
+
+list_metrics <- list()
+
+for (fold in folds) {
+  
+  cat("  Processing Fold", fold, "\n")
+  
+  testing <- which(Y$CV0 == fold)
+
+  yNA <- oil
+  yNA[testing] <- NA
+  
+  fm <- BGLR(
+    y = yNA,
+    ETA = ETA,
+    nIter = nIter,
+    burnIn = burnIn,
+    verbose = FALSE
+  )
+  
+  yHat <- fm$yHat
+  
+  for (a in uenv) {
+    
+    idx_env  <- which(env == a)
+    join <- intersect(idx_env, testing)
+    
+    if (length(join) > 1) {
+      
+      cor_val <- cor(yHat[join], oil[join])
+      
+      list_metrics[[length(list_metrics) + 1]] <-
+        data.frame(
+          Fold = fold,
+          Environment = a,
+          Predictive_Capacity = cor_val
+        )
+    }
+  }
+}
+
+df_metricas <- do.call(rbind, list_metrics)
+
+df_metrics <- bind_rows(list_metrics) %>% 
+  group_by(Environment) %>% 
+  summarise(pred = mean(Predictive_Capacity), sd = sd(Predictive_Capacity), .groups = "drop")
+
+writexl::write_xlsx(df_metrics, "GBLUP_CV0_Oil.xlsx")
+```
+
+# Laplacian
+
+```{r}
+load("EZ.rda")
+load("GDec_lpc.rda")
+```
+
+## CV1
+
+```{r}
+folds  <- 1:5
+```
+
+### Yield
+
+```{r}
+yield <- Y$yield
+env <- Y$environ
+uenv <- unique(env)
+
+set.seed(1)
+
+ETA <- list(
+  list(X = EZ, model = "FIXED"),
+  list(V = GDec$vectors, d = GDec$values, model = "RKHS")
+)
+
+list_metrics <- list()
+
+for (fold in folds) {
+  
+  cat("  Processing Fold", fold, "\n")
+  
+  testing <- which(Y$CV1 == fold)
+
+  yNA <- yield
+  yNA[testing] <- NA
+  
+  fm <- BGLR(
+    y = yNA,
+    ETA = ETA,
+    nIter = nIter,
+    burnIn = burnIn,
+    verbose = FALSE
+  )
+  
+  yHat <- fm$yHat
+  
+  for (a in uenv) {
+    
+    idx_env  <- which(env == a)
+    join <- intersect(idx_env, testing)
+    
+    if (length(join) > 1) {
+      
+      cor_val <- cor(yHat[join], yield[join])
+      
+      list_metrics[[length(list_metrics) + 1]] <-
+        data.frame(
+          Fold = fold,
+          Environment = a,
+          Predictive_Capacity = cor_val
+        )
+    }
+  }
+}
+
+df_metricas <- do.call(rbind, list_metrics)
+
+df_metrics <- bind_rows(list_metrics) %>% 
+  group_by(Environment) %>% 
+  summarise(pred = mean(Predictive_Capacity), sd = sd(Predictive_Capacity), .groups = "drop")
+
+writexl::write_xlsx(df_metrics, "LPC_CV1_Yield.xlsx")
+```
+
+### Protein
+
+```{r}
+protein <- Y$protein
+env <- Y$environ
+uenv <- unique(env)
+
+set.seed(1)
+
+ETA <- list(
+  list(X = EZ, model = "FIXED"),
+  list(V = GDec$vectors, d = GDec$values, model = "RKHS")
+)
+
+list_metrics <- list()
+
+for (fold in folds) {
+  
+  cat("  Processing Fold", fold, "\n")
+  
+  testing <- which(Y$CV1 == fold)
+
+  yNA <- protein
+  yNA[testing] <- NA
+  
+  fm <- BGLR(
+    y = yNA,
+    ETA = ETA,
+    nIter = nIter,
+    burnIn = burnIn,
+    verbose = FALSE
+  )
+  
+  yHat <- fm$yHat
+  
+  for (a in uenv) {
+    
+    idx_env  <- which(env == a)
+    join <- intersect(idx_env, testing)
+    
+    if (length(join) > 1) {
+      
+      cor_val <- cor(yHat[join], protein[join])
+      
+      list_metrics[[length(list_metrics) + 1]] <-
+        data.frame(
+          Fold = fold,
+          Environment = a,
+          Predictive_Capacity = cor_val
+        )
+    }
+  }
+}
+
+df_metricas <- do.call(rbind, list_metrics)
+
+df_metrics <- bind_rows(list_metrics) %>% 
+  group_by(Environment) %>% 
+  summarise(pred = mean(Predictive_Capacity), sd = sd(Predictive_Capacity), .groups = "drop")
+
+writexl::write_xlsx(df_metrics, "LPC_CV1_Protein.xlsx")
+```
+
+### Oil
+
+```{r}
+oil <- Y$oil
+env <- Y$environ
+uenv <- unique(env)
+
+set.seed(1)
+
+ETA <- list(
+  list(X = EZ, model = "FIXED"),
+  list(V = GDec$vectors, d = GDec$values, model = "RKHS")
+)
+
+list_metrics <- list()
+
+for (fold in folds) {
+  
+  cat("  Processing Fold", fold, "\n")
+  
+  testing <- which(Y$CV1 == fold)
+
+  yNA <- oil
+  yNA[testing] <- NA
+  
+  fm <- BGLR(
+    y = yNA,
+    ETA = ETA,
+    nIter = nIter,
+    burnIn = burnIn,
+    verbose = FALSE
+  )
+  
+  yHat <- fm$yHat
+  
+  for (a in uenv) {
+    
+    idx_env  <- which(env == a)
+    join <- intersect(idx_env, testing)
+    
+    if (length(join) > 1) {
+      
+      cor_val <- cor(yHat[join], oil[join])
+      
+      list_metrics[[length(list_metrics) + 1]] <-
+        data.frame(
+          Fold = fold,
+          Environment = a,
+          Predictive_Capacity = cor_val
+        )
+    }
+  }
+}
+
+df_metricas <- do.call(rbind, list_metrics)
+
+df_metrics <- bind_rows(list_metrics) %>% 
+  group_by(Environment) %>% 
+  summarise(pred = mean(Predictive_Capacity), sd = sd(Predictive_Capacity), .groups = "drop")
+
+writexl::write_xlsx(df_metrics, "LPC_CV1_Oil.xlsx")
+```
+
+## CV2
+
+```{r}
+folds  <- 1:5
+```
+
+### Yield
+
+```{r}
+yield <- Y$yield
+env <- Y$environ
+uenv <- unique(env)
+
+set.seed(1)
+
+ETA <- list(
+  list(X = EZ, model = "FIXED"),
+  list(V = GDec$vectors, d = GDec$values, model = "RKHS")
+)
+
+list_metrics <- list()
+
+for (fold in folds) {
+  
+  cat("  Processing Fold", fold, "\n")
+  
+  testing <- which(Y$CV2 == fold)
+
+  yNA <- yield
+  yNA[testing] <- NA
+  
+  fm <- BGLR(
+    y = yNA,
+    ETA = ETA,
+    nIter = nIter,
+    burnIn = burnIn,
+    verbose = FALSE
+  )
+  
+  yHat <- fm$yHat
+  
+  for (a in uenv) {
+    
+    idx_env  <- which(env == a)
+    join <- intersect(idx_env, testing)
+    
+    if (length(join) > 1) {
+      
+      cor_val <- cor(yHat[join], yield[join])
+      
+      list_metrics[[length(list_metrics) + 1]] <-
+        data.frame(
+          Fold = fold,
+          Environment = a,
+          Predictive_Capacity = cor_val
+        )
+    }
+  }
+}
+
+df_metricas <- do.call(rbind, list_metrics)
+
+df_metrics <- bind_rows(list_metrics) %>% 
+  group_by(Environment) %>% 
+  summarise(pred = mean(Predictive_Capacity), sd = sd(Predictive_Capacity), .groups = "drop")
+
+writexl::write_xlsx(df_metrics, "LPC_CV2_Yield.xlsx")
+```
+
+### Protein
+
+```{r}
+protein <- Y$protein
+env <- Y$environ
+uenv <- unique(env)
+
+set.seed(1)
+
+ETA <- list(
+  list(X = EZ, model = "FIXED"),
+  list(V = GDec$vectors, d = GDec$values, model = "RKHS")
+)
+
+list_metrics <- list()
+
+for (fold in folds) {
+  
+  cat("  Processing Fold", fold, "\n")
+  
+  testing <- which(Y$CV2 == fold)
+
+  yNA <- protein
+  yNA[testing] <- NA
+  
+  fm <- BGLR(
+    y = yNA,
+    ETA = ETA,
+    nIter = nIter,
+    burnIn = burnIn,
+    verbose = FALSE
+  )
+  
+  yHat <- fm$yHat
+  
+  for (a in uenv) {
+    
+    idx_env  <- which(env == a)
+    join <- intersect(idx_env, testing)
+    
+    if (length(join) > 1) {
+      
+      cor_val <- cor(yHat[join], protein[join])
+      
+      list_metrics[[length(list_metrics) + 1]] <-
+        data.frame(
+          Fold = fold,
+          Environment = a,
+          Predictive_Capacity = cor_val
+        )
+    }
+  }
+}
+
+df_metricas <- do.call(rbind, list_metrics)
+
+df_metrics <- bind_rows(list_metrics) %>% 
+  group_by(Environment) %>% 
+  summarise(pred = mean(Predictive_Capacity), sd = sd(Predictive_Capacity), .groups = "drop")
+
+writexl::write_xlsx(df_metrics, "LPC_CV2_Protein.xlsx")
+```
+
+### Oil
+
+```{r}
+oil <- Y$oil
+env <- Y$environ
+uenv <- unique(env)
+
+set.seed(1)
+
+ETA <- list(
+  list(X = EZ, model = "FIXED"),
+  list(V = GDec$vectors, d = GDec$values, model = "RKHS")
+)
+
+list_metrics <- list()
+
+for (fold in folds) {
+  
+  cat("  Processing Fold", fold, "\n")
+  
+  testing <- which(Y$CV2 == fold)
+
+  yNA <- oil
+  yNA[testing] <- NA
+  
+  fm <- BGLR(
+    y = yNA,
+    ETA = ETA,
+    nIter = nIter,
+    burnIn = burnIn,
+    verbose = FALSE
+  )
+  
+  yHat <- fm$yHat
+  
+  for (a in uenv) {
+    
+    idx_env  <- which(env == a)
+    join <- intersect(idx_env, testing)
+    
+    if (length(join) > 1) {
+      
+      cor_val <- cor(yHat[join], oil[join])
+      
+      list_metrics[[length(list_metrics) + 1]] <-
+        data.frame(
+          Fold = fold,
+          Environment = a,
+          Predictive_Capacity = cor_val
+        )
+    }
+  }
+}
+
+df_metricas <- do.call(rbind, list_metrics)
+
+df_metrics <- bind_rows(list_metrics) %>% 
+  group_by(Environment) %>% 
+  summarise(pred = mean(Predictive_Capacity), sd = sd(Predictive_Capacity), .groups = "drop")
+
+writexl::write_xlsx(df_metrics, "LPC_CV2_Oil.xlsx")
+```
+
+## CV0
+
+```{r}
+folds  <- 1:6
+```
+
+### Yield
+
+```{r}
+yield <- Y$yield
+env <- Y$environ
+uenv <- unique(env)
+
+set.seed(1)
+
+ETA <- list(
+  list(X = EZ, model = "FIXED"),
+  list(V = GDec$vectors, d = GDec$values, model = "RKHS")
+)
+
+list_metrics <- list()
+
+for (fold in folds) {
+  
+  cat("  Processing Fold", fold, "\n")
+  
+  testing <- which(Y$CV0 == fold)
+
+  yNA <- yield
+  yNA[testing] <- NA
+  
+  fm <- BGLR(
+    y = yNA,
+    ETA = ETA,
+    nIter = nIter,
+    burnIn = burnIn,
+    verbose = FALSE
+  )
+  
+  yHat <- fm$yHat
+  
+  for (a in uenv) {
+    
+    idx_env  <- which(env == a)
+    join <- intersect(idx_env, testing)
+    
+    if (length(join) > 1) {
+      
+      cor_val <- cor(yHat[join], yield[join])
+      
+      list_metrics[[length(list_metrics) + 1]] <-
+        data.frame(
+          Fold = fold,
+          Environment = a,
+          Predictive_Capacity = cor_val
+        )
+    }
+  }
+}
+
+df_metricas <- do.call(rbind, list_metrics)
+
+df_metrics <- bind_rows(list_metrics) %>% 
+  group_by(Environment) %>% 
+  summarise(pred = mean(Predictive_Capacity), sd = sd(Predictive_Capacity), .groups = "drop")
+
+writexl::write_xlsx(df_metrics, "LPC_CV0_Yield.xlsx")
+```
+
+### Protein
+
+```{r}
+protein <- Y$protein
+env <- Y$environ
+uenv <- unique(env)
+
+set.seed(1)
+
+ETA <- list(
+  list(X = EZ, model = "FIXED"),
+  list(V = GDec$vectors, d = GDec$values, model = "RKHS")
+)
+
+list_metrics <- list()
+
+for (fold in folds) {
+  
+  cat("  Processing Fold", fold, "\n")
+  
+  testing <- which(Y$CV0 == fold)
+
+  yNA <- protein
+  yNA[testing] <- NA
+  
+  fm <- BGLR(
+    y = yNA,
+    ETA = ETA,
+    nIter = nIter,
+    burnIn = burnIn,
+    verbose = FALSE
+  )
+  
+  yHat <- fm$yHat
+  
+  for (a in uenv) {
+    
+    idx_env  <- which(env == a)
+    join <- intersect(idx_env, testing)
+    
+    if (length(join) > 1) {
+      
+      cor_val <- cor(yHat[join], protein[join])
+      
+      list_metrics[[length(list_metrics) + 1]] <-
+        data.frame(
+          Fold = fold,
+          Environment = a,
+          Predictive_Capacity = cor_val
+        )
+    }
+  }
+}
+
+df_metricas <- do.call(rbind, list_metrics)
+
+df_metrics <- bind_rows(list_metrics) %>% 
+  group_by(Environment) %>% 
+  summarise(pred = mean(Predictive_Capacity), sd = sd(Predictive_Capacity), .groups = "drop")
+
+writexl::write_xlsx(df_metrics, "LPC_CV0_Protein.xlsx")
+```
+
+### Oil
+
+```{r}
+oil <- Y$oil
+env <- Y$environ
+uenv <- unique(env)
+
+set.seed(1)
+
+ETA <- list(
+  list(X = EZ, model = "FIXED"),
+  list(V = GDec$vectors, d = GDec$values, model = "RKHS")
+)
+
+list_metrics <- list()
+
+for (fold in folds) {
+  
+  cat("  Processing Fold", fold, "\n")
+  
+  testing <- which(Y$CV0 == fold)
+
+  yNA <- oil
+  yNA[testing] <- NA
+  
+  fm <- BGLR(
+    y = yNA,
+    ETA = ETA,
+    nIter = nIter,
+    burnIn = burnIn,
+    verbose = FALSE
+  )
+  
+  yHat <- fm$yHat
+  
+  for (a in uenv) {
+    
+    idx_env  <- which(env == a)
+    join <- intersect(idx_env, testing)
+    
+    if (length(join) > 1) {
+      
+      cor_val <- cor(yHat[join], oil[join])
+      
+      list_metrics[[length(list_metrics) + 1]] <-
+        data.frame(
+          Fold = fold,
+          Environment = a,
+          Predictive_Capacity = cor_val
+        )
+    }
+  }
+}
+
+df_metricas <- do.call(rbind, list_metrics)
+
+df_metrics <- bind_rows(list_metrics) %>% 
+  group_by(Environment) %>% 
+  summarise(pred = mean(Predictive_Capacity), sd = sd(Predictive_Capacity), .groups = "drop")
+
+writexl::write_xlsx(df_metrics, "LPC_CV0_Oil.xlsx")
+```
+
+# Polynomial
+
+```{r}
+load("EZ.rda")
+load("GDec_poly.rda")
+```
+
+## CV1
+
+```{r}
+folds  <- 1:5
+```
+
+### Yield
+
+```{r}
+yield <- Y$yield
+env <- Y$environ
+uenv <- unique(env)
+
+set.seed(1)
+
+ETA <- list(
+  list(X = EZ, model = "FIXED"),
+  list(V = GDec$vectors, d = GDec$values, model = "RKHS")
+)
+
+list_metrics <- list()
+
+for (fold in folds) {
+  
+  cat("  Processing Fold", fold, "\n")
+  
+  testing <- which(Y$CV1 == fold)
+
+  yNA <- yield
+  yNA[testing] <- NA
+  
+  fm <- BGLR(
+    y = yNA,
+    ETA = ETA,
+    nIter = nIter,
+    burnIn = burnIn,
+    verbose = FALSE
+  )
+  
+  yHat <- fm$yHat
+  
+  for (a in uenv) {
+    
+    idx_env  <- which(env == a)
+    join <- intersect(idx_env, testing)
+    
+    if (length(join) > 1) {
+      
+      cor_val <- cor(yHat[join], yield[join])
+      
+      list_metrics[[length(list_metrics) + 1]] <-
+        data.frame(
+          Fold = fold,
+          Environment = a,
+          Predictive_Capacity = cor_val
+        )
+    }
+  }
+}
+
+df_metricas <- do.call(rbind, list_metrics)
+
+df_metrics <- bind_rows(list_metrics) %>% 
+  group_by(Environment) %>% 
+  summarise(pred = mean(Predictive_Capacity), sd = sd(Predictive_Capacity), .groups = "drop")
+
+writexl::write_xlsx(df_metrics, "POLY_CV1_Yield.xlsx")
+```
+
+### Protein
+
+```{r}
+protein <- Y$protein
+env <- Y$environ
+uenv <- unique(env)
+
+set.seed(1)
+
+ETA <- list(
+  list(X = EZ, model = "FIXED"),
+  list(V = GDec$vectors, d = GDec$values, model = "RKHS")
+)
+
+list_metrics <- list()
+
+for (fold in folds) {
+  
+  cat("  Processing Fold", fold, "\n")
+  
+  testing <- which(Y$CV1 == fold)
+
+  yNA <- protein
+  yNA[testing] <- NA
+  
+  fm <- BGLR(
+    y = yNA,
+    ETA = ETA,
+    nIter = nIter,
+    burnIn = burnIn,
+    verbose = FALSE
+  )
+  
+  yHat <- fm$yHat
+  
+  for (a in uenv) {
+    
+    idx_env  <- which(env == a)
+    join <- intersect(idx_env, testing)
+    
+    if (length(join) > 1) {
+      
+      cor_val <- cor(yHat[join], protein[join])
+      
+      list_metrics[[length(list_metrics) + 1]] <-
+        data.frame(
+          Fold = fold,
+          Environment = a,
+          Predictive_Capacity = cor_val
+        )
+    }
+  }
+}
+
+df_metricas <- do.call(rbind, list_metrics)
+
+df_metrics <- bind_rows(list_metrics) %>% 
+  group_by(Environment) %>% 
+  summarise(pred = mean(Predictive_Capacity), sd = sd(Predictive_Capacity), .groups = "drop")
+
+writexl::write_xlsx(df_metrics, "POLY_CV1_Protein.xlsx")
+```
+
+### Oil
+
+```{r}
+oil <- Y$oil
+env <- Y$environ
+uenv <- unique(env)
+
+set.seed(1)
+
+ETA <- list(
+  list(X = EZ, model = "FIXED"),
+  list(V = GDec$vectors, d = GDec$values, model = "RKHS")
+)
+
+list_metrics <- list()
+
+for (fold in folds) {
+  
+  cat("  Processing Fold", fold, "\n")
+  
+  testing <- which(Y$CV1 == fold)
+
+  yNA <- oil
+  yNA[testing] <- NA
+  
+  fm <- BGLR(
+    y = yNA,
+    ETA = ETA,
+    nIter = nIter,
+    burnIn = burnIn,
+    verbose = FALSE
+  )
+  
+  yHat <- fm$yHat
+  
+  for (a in uenv) {
+    
+    idx_env  <- which(env == a)
+    join <- intersect(idx_env, testing)
+    
+    if (length(join) > 1) {
+      
+      cor_val <- cor(yHat[join], oil[join])
+      
+      list_metrics[[length(list_metrics) + 1]] <-
+        data.frame(
+          Fold = fold,
+          Environment = a,
+          Predictive_Capacity = cor_val
+        )
+    }
+  }
+}
+
+df_metricas <- do.call(rbind, list_metrics)
+
+df_metrics <- bind_rows(list_metrics) %>% 
+  group_by(Environment) %>% 
+  summarise(pred = mean(Predictive_Capacity), sd = sd(Predictive_Capacity), .groups = "drop")
+
+writexl::write_xlsx(df_metrics, "POLY_CV1_Oil.xlsx")
+```
+
+## CV2
+
+```{r}
+folds  <- 1:5
+```
+
+### Yield
+
+```{r}
+yield <- Y$yield
+env <- Y$environ
+uenv <- unique(env)
+
+set.seed(1)
+
+ETA <- list(
+  list(X = EZ, model = "FIXED"),
+  list(V = GDec$vectors, d = GDec$values, model = "RKHS")
+)
+
+list_metrics <- list()
+
+for (fold in folds) {
+  
+  cat("  Processing Fold", fold, "\n")
+  
+  testing <- which(Y$CV2 == fold)
+
+  yNA <- yield
+  yNA[testing] <- NA
+  
+  fm <- BGLR(
+    y = yNA,
+    ETA = ETA,
+    nIter = nIter,
+    burnIn = burnIn,
+    verbose = FALSE
+  )
+  
+  yHat <- fm$yHat
+  
+  for (a in uenv) {
+    
+    idx_env  <- which(env == a)
+    join <- intersect(idx_env, testing)
+    
+    if (length(join) > 1) {
+      
+      cor_val <- cor(yHat[join], yield[join])
+      
+      list_metrics[[length(list_metrics) + 1]] <-
+        data.frame(
+          Fold = fold,
+          Environment = a,
+          Predictive_Capacity = cor_val
+        )
+    }
+  }
+}
+
+df_metricas <- do.call(rbind, list_metrics)
+
+df_metrics <- bind_rows(list_metrics) %>% 
+  group_by(Environment) %>% 
+  summarise(pred = mean(Predictive_Capacity), sd = sd(Predictive_Capacity), .groups = "drop")
+
+writexl::write_xlsx(df_metrics, "POLY_CV2_Yield.xlsx")
+```
+
+### Protein
+
+```{r}
+protein <- Y$protein
+env <- Y$environ
+uenv <- unique(env)
+
+set.seed(1)
+
+ETA <- list(
+  list(X = EZ, model = "FIXED"),
+  list(V = GDec$vectors, d = GDec$values, model = "RKHS")
+)
+
+list_metrics <- list()
+
+for (fold in folds) {
+  
+  cat("  Processing Fold", fold, "\n")
+  
+  testing <- which(Y$CV2 == fold)
+
+  yNA <- protein
+  yNA[testing] <- NA
+  
+  fm <- BGLR(
+    y = yNA,
+    ETA = ETA,
+    nIter = nIter,
+    burnIn = burnIn,
+    verbose = FALSE
+  )
+  
+  yHat <- fm$yHat
+  
+  for (a in uenv) {
+    
+    idx_env  <- which(env == a)
+    join <- intersect(idx_env, testing)
+    
+    if (length(join) > 1) {
+      
+      cor_val <- cor(yHat[join], protein[join])
+      
+      list_metrics[[length(list_metrics) + 1]] <-
+        data.frame(
+          Fold = fold,
+          Environment = a,
+          Predictive_Capacity = cor_val
+        )
+    }
+  }
+}
+
+df_metricas <- do.call(rbind, list_metrics)
+
+df_metrics <- bind_rows(list_metrics) %>% 
+  group_by(Environment) %>% 
+  summarise(pred = mean(Predictive_Capacity), sd = sd(Predictive_Capacity), .groups = "drop")
+
+writexl::write_xlsx(df_metrics, "POLY_CV2_Protein.xlsx")
+```
+
+### Oil
+
+```{r}
+oil <- Y$oil
+env <- Y$environ
+uenv <- unique(env)
+
+set.seed(1)
+
+ETA <- list(
+  list(X = EZ, model = "FIXED"),
+  list(V = GDec$vectors, d = GDec$values, model = "RKHS")
+)
+
+list_metrics <- list()
+
+for (fold in folds) {
+  
+  cat("  Processing Fold", fold, "\n")
+  
+  testing <- which(Y$CV2 == fold)
+
+  yNA <- oil
+  yNA[testing] <- NA
+  
+  fm <- BGLR(
+    y = yNA,
+    ETA = ETA,
+    nIter = nIter,
+    burnIn = burnIn,
+    verbose = FALSE
+  )
+  
+  yHat <- fm$yHat
+  
+  for (a in uenv) {
+    
+    idx_env  <- which(env == a)
+    join <- intersect(idx_env, testing)
+    
+    if (length(join) > 1) {
+      
+      cor_val <- cor(yHat[join], oil[join])
+      
+      list_metrics[[length(list_metrics) + 1]] <-
+        data.frame(
+          Fold = fold,
+          Environment = a,
+          Predictive_Capacity = cor_val
+        )
+    }
+  }
+}
+
+df_metricas <- do.call(rbind, list_metrics)
+
+df_metrics <- bind_rows(list_metrics) %>% 
+  group_by(Environment) %>% 
+  summarise(pred = mean(Predictive_Capacity), sd = sd(Predictive_Capacity), .groups = "drop")
+
+writexl::write_xlsx(df_metrics, "POLY_CV2_Oil.xlsx")
+```
+
+## CV0
+
+```{r}
+folds  <- 1:6
+```
+
+### Yield
+
+```{r}
+yield <- Y$yield
+env <- Y$environ
+uenv <- unique(env)
+
+set.seed(1)
+
+ETA <- list(
+  list(X = EZ, model = "FIXED"),
+  list(V = GDec$vectors, d = GDec$values, model = "RKHS")
+)
+
+list_metrics <- list()
+
+for (fold in folds) {
+  
+  cat("  Processing Fold", fold, "\n")
+  
+  testing <- which(Y$CV0 == fold)
+
+  yNA <- yield
+  yNA[testing] <- NA
+  
+  fm <- BGLR(
+    y = yNA,
+    ETA = ETA,
+    nIter = nIter,
+    burnIn = burnIn,
+    verbose = FALSE
+  )
+  
+  yHat <- fm$yHat
+  
+  for (a in uenv) {
+    
+    idx_env  <- which(env == a)
+    join <- intersect(idx_env, testing)
+    
+    if (length(join) > 1) {
+      
+      cor_val <- cor(yHat[join], yield[join])
+      
+      list_metrics[[length(list_metrics) + 1]] <-
+        data.frame(
+          Fold = fold,
+          Environment = a,
+          Predictive_Capacity = cor_val
+        )
+    }
+  }
+}
+
+df_metricas <- do.call(rbind, list_metrics)
+
+df_metrics <- bind_rows(list_metrics) %>% 
+  group_by(Environment) %>% 
+  summarise(pred = mean(Predictive_Capacity), sd = sd(Predictive_Capacity), .groups = "drop")
+
+writexl::write_xlsx(df_metrics, "POLY_CV0_Yield.xlsx")
+```
+
+### Protein
+
+```{r}
+protein <- Y$protein
+env <- Y$environ
+uenv <- unique(env)
+
+set.seed(1)
+
+ETA <- list(
+  list(X = EZ, model = "FIXED"),
+  list(V = GDec$vectors, d = GDec$values, model = "RKHS")
+)
+
+list_metrics <- list()
+
+for (fold in folds) {
+  
+  cat("  Processing Fold", fold, "\n")
+  
+  testing <- which(Y$CV0 == fold)
+
+  yNA <- protein
+  yNA[testing] <- NA
+  
+  fm <- BGLR(
+    y = yNA,
+    ETA = ETA,
+    nIter = nIter,
+    burnIn = burnIn,
+    verbose = FALSE
+  )
+  
+  yHat <- fm$yHat
+  
+  for (a in uenv) {
+    
+    idx_env  <- which(env == a)
+    join <- intersect(idx_env, testing)
+    
+    if (length(join) > 1) {
+      
+      cor_val <- cor(yHat[join], protein[join])
+      
+      list_metrics[[length(list_metrics) + 1]] <-
+        data.frame(
+          Fold = fold,
+          Environment = a,
+          Predictive_Capacity = cor_val
+        )
+    }
+  }
+}
+
+df_metricas <- do.call(rbind, list_metrics)
+
+df_metrics <- bind_rows(list_metrics) %>% 
+  group_by(Environment) %>% 
+  summarise(pred = mean(Predictive_Capacity), sd = sd(Predictive_Capacity), .groups = "drop")
+
+writexl::write_xlsx(df_metrics, "POLY_CV0_Protein.xlsx")
+```
+
+### Oil
+
+```{r}
+oil <- Y$oil
+env <- Y$environ
+uenv <- unique(env)
+
+set.seed(1)
+
+ETA <- list(
+  list(X = EZ, model = "FIXED"),
+  list(V = GDec$vectors, d = GDec$values, model = "RKHS")
+)
+
+list_metrics <- list()
+
+for (fold in folds) {
+  
+  cat("  Processing Fold", fold, "\n")
+  
+  testing <- which(Y$CV0 == fold)
+
+  yNA <- oil
+  yNA[testing] <- NA
+  
+  fm <- BGLR(
+    y = yNA,
+    ETA = ETA,
+    nIter = nIter,
+    burnIn = burnIn,
+    verbose = FALSE
+  )
+  
+  yHat <- fm$yHat
+  
+  for (a in uenv) {
+    
+    idx_env  <- which(env == a)
+    join <- intersect(idx_env, testing)
+    
+    if (length(join) > 1) {
+      
+      cor_val <- cor(yHat[join], oil[join])
+      
+      list_metrics[[length(list_metrics) + 1]] <-
+        data.frame(
+          Fold = fold,
+          Environment = a,
+          Predictive_Capacity = cor_val
+        )
+    }
+  }
+}
+
+df_metricas <- do.call(rbind, list_metrics)
+
+df_metrics <- bind_rows(list_metrics) %>% 
+  group_by(Environment) %>% 
+  summarise(pred = mean(Predictive_Capacity), sd = sd(Predictive_Capacity), .groups = "drop")
+
+writexl::write_xlsx(df_metrics, "POLY_CV0_Oil.xlsx")
+```
+
+# Bessel
+
+```{r}
+load("EZ.rda")
+load("GDec_bsl.rda")
+```
+
+## CV1
+
+```{r}
+folds  <- 1:5
+```
+
+### Yield
+
+```{r}
+yield <- Y$yield
+env <- Y$environ
+uenv <- unique(env)
+
+set.seed(1)
+
+ETA <- list(
+  list(X = EZ, model = "FIXED"),
+  list(V = GDec$vectors, d = GDec$values, model = "RKHS")
+)
+
+list_metrics <- list()
+
+for (fold in folds) {
+  
+  cat("  Processing Fold", fold, "\n")
+  
+  testing <- which(Y$CV1 == fold)
+
+  yNA <- yield
+  yNA[testing] <- NA
+  
+  fm <- BGLR(
+    y = yNA,
+    ETA = ETA,
+    nIter = nIter,
+    burnIn = burnIn,
+    verbose = FALSE
+  )
+  
+  yHat <- fm$yHat
+  
+  for (a in uenv) {
+    
+    idx_env  <- which(env == a)
+    join <- intersect(idx_env, testing)
+    
+    if (length(join) > 1) {
+      
+      cor_val <- cor(yHat[join], yield[join])
+      
+      list_metrics[[length(list_metrics) + 1]] <-
+        data.frame(
+          Fold = fold,
+          Environment = a,
+          Predictive_Capacity = cor_val
+        )
+    }
+  }
+}
+
+df_metricas <- do.call(rbind, list_metrics)
+
+df_metrics <- bind_rows(list_metrics) %>% 
+  group_by(Environment) %>% 
+  summarise(pred = mean(Predictive_Capacity), sd = sd(Predictive_Capacity), .groups = "drop")
+
+writexl::write_xlsx(df_metrics, "BSL_CV1_Yield.xlsx")
+```
+
+### Protein
+
+```{r}
+protein <- Y$protein
+env <- Y$environ
+uenv <- unique(env)
+
+set.seed(1)
+
+ETA <- list(
+  list(X = EZ, model = "FIXED"),
+  list(V = GDec$vectors, d = GDec$values, model = "RKHS")
+)
+
+list_metrics <- list()
+
+for (fold in folds) {
+  
+  cat("  Processing Fold", fold, "\n")
+  
+  testing <- which(Y$CV1 == fold)
+
+  yNA <- protein
+  yNA[testing] <- NA
+  
+  fm <- BGLR(
+    y = yNA,
+    ETA = ETA,
+    nIter = nIter,
+    burnIn = burnIn,
+    verbose = FALSE
+  )
+  
+  yHat <- fm$yHat
+  
+  for (a in uenv) {
+    
+    idx_env  <- which(env == a)
+    join <- intersect(idx_env, testing)
+    
+    if (length(join) > 1) {
+      
+      cor_val <- cor(yHat[join], protein[join])
+      
+      list_metrics[[length(list_metrics) + 1]] <-
+        data.frame(
+          Fold = fold,
+          Environment = a,
+          Predictive_Capacity = cor_val
+        )
+    }
+  }
+}
+
+df_metricas <- do.call(rbind, list_metrics)
+
+df_metrics <- bind_rows(list_metrics) %>% 
+  group_by(Environment) %>% 
+  summarise(pred = mean(Predictive_Capacity), sd = sd(Predictive_Capacity), .groups = "drop")
+
+writexl::write_xlsx(df_metrics, "BSL_CV1_Protein.xlsx")
+```
+
+### Oil
+
+```{r}
+oil <- Y$oil
+env <- Y$environ
+uenv <- unique(env)
+
+set.seed(1)
+
+ETA <- list(
+  list(X = EZ, model = "FIXED"),
+  list(V = GDec$vectors, d = GDec$values, model = "RKHS")
+)
+
+list_metrics <- list()
+
+for (fold in folds) {
+  
+  cat("  Processing Fold", fold, "\n")
+  
+  testing <- which(Y$CV1 == fold)
+
+  yNA <- oil
+  yNA[testing] <- NA
+  
+  fm <- BGLR(
+    y = yNA,
+    ETA = ETA,
+    nIter = nIter,
+    burnIn = burnIn,
+    verbose = FALSE
+  )
+  
+  yHat <- fm$yHat
+  
+  for (a in uenv) {
+    
+    idx_env  <- which(env == a)
+    join <- intersect(idx_env, testing)
+    
+    if (length(join) > 1) {
+      
+      cor_val <- cor(yHat[join], oil[join])
+      
+      list_metrics[[length(list_metrics) + 1]] <-
+        data.frame(
+          Fold = fold,
+          Environment = a,
+          Predictive_Capacity = cor_val
+        )
+    }
+  }
+}
+
+df_metricas <- do.call(rbind, list_metrics)
+
+df_metrics <- bind_rows(list_metrics) %>% 
+  group_by(Environment) %>% 
+  summarise(pred = mean(Predictive_Capacity), sd = sd(Predictive_Capacity), .groups = "drop")
+
+writexl::write_xlsx(df_metrics, "BSL_CV1_Oil.xlsx")
+```
+
+## CV2
+
+```{r}
+folds  <- 1:5
+```
+
+### Yield
+
+```{r}
+yield <- Y$yield
+env <- Y$environ
+uenv <- unique(env)
+
+set.seed(1)
+
+ETA <- list(
+  list(X = EZ, model = "FIXED"),
+  list(V = GDec$vectors, d = GDec$values, model = "RKHS")
+)
+
+list_metrics <- list()
+
+for (fold in folds) {
+  
+  cat("  Processing Fold", fold, "\n")
+  
+  testing <- which(Y$CV2 == fold)
+
+  yNA <- yield
+  yNA[testing] <- NA
+  
+  fm <- BGLR(
+    y = yNA,
+    ETA = ETA,
+    nIter = nIter,
+    burnIn = burnIn,
+    verbose = FALSE
+  )
+  
+  yHat <- fm$yHat
+  
+  for (a in uenv) {
+    
+    idx_env  <- which(env == a)
+    join <- intersect(idx_env, testing)
+    
+    if (length(join) > 1) {
+      
+      cor_val <- cor(yHat[join], yield[join])
+      
+      list_metrics[[length(list_metrics) + 1]] <-
+        data.frame(
+          Fold = fold,
+          Environment = a,
+          Predictive_Capacity = cor_val
+        )
+    }
+  }
+}
+
+df_metricas <- do.call(rbind, list_metrics)
+
+df_metrics <- bind_rows(list_metrics) %>% 
+  group_by(Environment) %>% 
+  summarise(pred = mean(Predictive_Capacity), sd = sd(Predictive_Capacity), .groups = "drop")
+
+writexl::write_xlsx(df_metrics, "BSL_CV2_Yield.xlsx")
+```
+
+### Protein
+
+```{r}
+protein <- Y$protein
+env <- Y$environ
+uenv <- unique(env)
+
+set.seed(1)
+
+ETA <- list(
+  list(X = EZ, model = "FIXED"),
+  list(V = GDec$vectors, d = GDec$values, model = "RKHS")
+)
+
+list_metrics <- list()
+
+for (fold in folds) {
+  
+  cat("  Processing Fold", fold, "\n")
+  
+  testing <- which(Y$CV2 == fold)
+
+  yNA <- protein
+  yNA[testing] <- NA
+  
+  fm <- BGLR(
+    y = yNA,
+    ETA = ETA,
+    nIter = nIter,
+    burnIn = burnIn,
+    verbose = FALSE
+  )
+  
+  yHat <- fm$yHat
+  
+  for (a in uenv) {
+    
+    idx_env  <- which(env == a)
+    join <- intersect(idx_env, testing)
+    
+    if (length(join) > 1) {
+      
+      cor_val <- cor(yHat[join], protein[join])
+      
+      list_metrics[[length(list_metrics) + 1]] <-
+        data.frame(
+          Fold = fold,
+          Environment = a,
+          Predictive_Capacity = cor_val
+        )
+    }
+  }
+}
+
+df_metricas <- do.call(rbind, list_metrics)
+
+df_metrics <- bind_rows(list_metrics) %>% 
+  group_by(Environment) %>% 
+  summarise(pred = mean(Predictive_Capacity), sd = sd(Predictive_Capacity), .groups = "drop")
+
+writexl::write_xlsx(df_metrics, "BSL_CV2_Protein.xlsx")
+```
+
+### Oil
+
+```{r}
+oil <- Y$oil
+env <- Y$environ
+uenv <- unique(env)
+
+set.seed(1)
+
+ETA <- list(
+  list(X = EZ, model = "FIXED"),
+  list(V = GDec$vectors, d = GDec$values, model = "RKHS")
+)
+
+list_metrics <- list()
+
+for (fold in folds) {
+  
+  cat("  Processing Fold", fold, "\n")
+  
+  testing <- which(Y$CV2 == fold)
+
+  yNA <- oil
+  yNA[testing] <- NA
+  
+  fm <- BGLR(
+    y = yNA,
+    ETA = ETA,
+    nIter = nIter,
+    burnIn = burnIn,
+    verbose = FALSE
+  )
+  
+  yHat <- fm$yHat
+  
+  for (a in uenv) {
+    
+    idx_env  <- which(env == a)
+    join <- intersect(idx_env, testing)
+    
+    if (length(join) > 1) {
+      
+      cor_val <- cor(yHat[join], oil[join])
+      
+      list_metrics[[length(list_metrics) + 1]] <-
+        data.frame(
+          Fold = fold,
+          Environment = a,
+          Predictive_Capacity = cor_val
+        )
+    }
+  }
+}
+
+df_metricas <- do.call(rbind, list_metrics)
+
+df_metrics <- bind_rows(list_metrics) %>% 
+  group_by(Environment) %>% 
+  summarise(pred = mean(Predictive_Capacity), sd = sd(Predictive_Capacity), .groups = "drop")
+
+writexl::write_xlsx(df_metrics, "BSL_CV2_Oil.xlsx")
+```
+
+## CV0
+
+```{r}
+folds  <- 1:6
+```
+
+### Yield
+
+```{r}
+yield <- Y$yield
+env <- Y$environ
+uenv <- unique(env)
+
+set.seed(1)
+
+ETA <- list(
+  list(X = EZ, model = "FIXED"),
+  list(V = GDec$vectors, d = GDec$values, model = "RKHS")
+)
+
+list_metrics <- list()
+
+for (fold in folds) {
+  
+  cat("  Processing Fold", fold, "\n")
+  
+  testing <- which(Y$CV0 == fold)
+
+  yNA <- yield
+  yNA[testing] <- NA
+  
+  fm <- BGLR(
+    y = yNA,
+    ETA = ETA,
+    nIter = nIter,
+    burnIn = burnIn,
+    verbose = FALSE
+  )
+  
+  yHat <- fm$yHat
+  
+  for (a in uenv) {
+    
+    idx_env  <- which(env == a)
+    join <- intersect(idx_env, testing)
+    
+    if (length(join) > 1) {
+      
+      cor_val <- cor(yHat[join], yield[join])
+      
+      list_metrics[[length(list_metrics) + 1]] <-
+        data.frame(
+          Fold = fold,
+          Environment = a,
+          Predictive_Capacity = cor_val
+        )
+    }
+  }
+}
+
+df_metricas <- do.call(rbind, list_metrics)
+
+df_metrics <- bind_rows(list_metrics) %>% 
+  group_by(Environment) %>% 
+  summarise(pred = mean(Predictive_Capacity), sd = sd(Predictive_Capacity), .groups = "drop")
+
+writexl::write_xlsx(df_metrics, "BSL_CV0_Yield.xlsx")
+```
+
+### Protein
+
+```{r}
+protein <- Y$protein
+env <- Y$environ
+uenv <- unique(env)
+
+set.seed(1)
+
+ETA <- list(
+  list(X = EZ, model = "FIXED"),
+  list(V = GDec$vectors, d = GDec$values, model = "RKHS")
+)
+
+list_metrics <- list()
+
+for (fold in folds) {
+  
+  cat("  Processing Fold", fold, "\n")
+  
+  testing <- which(Y$CV0 == fold)
+
+  yNA <- protein
+  yNA[testing] <- NA
+  
+  fm <- BGLR(
+    y = yNA,
+    ETA = ETA,
+    nIter = nIter,
+    burnIn = burnIn,
+    verbose = FALSE
+  )
+  
+  yHat <- fm$yHat
+  
+  for (a in uenv) {
+    
+    idx_env  <- which(env == a)
+    join <- intersect(idx_env, testing)
+    
+    if (length(join) > 1) {
+      
+      cor_val <- cor(yHat[join], protein[join])
+      
+      list_metrics[[length(list_metrics) + 1]] <-
+        data.frame(
+          Fold = fold,
+          Environment = a,
+          Predictive_Capacity = cor_val
+        )
+    }
+  }
+}
+
+df_metricas <- do.call(rbind, list_metrics)
+
+df_metrics <- bind_rows(list_metrics) %>% 
+  group_by(Environment) %>% 
+  summarise(pred = mean(Predictive_Capacity), sd = sd(Predictive_Capacity), .groups = "drop")
+
+writexl::write_xlsx(df_metrics, "BSL_CV0_Protein.xlsx")
+```
+
+### Oil
+
+```{r}
+oil <- Y$oil
+env <- Y$environ
+uenv <- unique(env)
+
+set.seed(1)
+
+ETA <- list(
+  list(X = EZ, model = "FIXED"),
+  list(V = GDec$vectors, d = GDec$values, model = "RKHS")
+)
+
+list_metrics <- list()
+
+for (fold in folds) {
+  
+  cat("  Processing Fold", fold, "\n")
+  
+  testing <- which(Y$CV0 == fold)
+
+  yNA <- oil
+  yNA[testing] <- NA
+  
+  fm <- BGLR(
+    y = yNA,
+    ETA = ETA,
+    nIter = nIter,
+    burnIn = burnIn,
+    verbose = FALSE
+  )
+  
+  yHat <- fm$yHat
+  
+  for (a in uenv) {
+    
+    idx_env  <- which(env == a)
+    join <- intersect(idx_env, testing)
+    
+    if (length(join) > 1) {
+      
+      cor_val <- cor(yHat[join], oil[join])
+      
+      list_metrics[[length(list_metrics) + 1]] <-
+        data.frame(
+          Fold = fold,
+          Environment = a,
+          Predictive_Capacity = cor_val
+        )
+    }
+  }
+}
+
+df_metricas <- do.call(rbind, list_metrics)
+
+df_metrics <- bind_rows(list_metrics) %>% 
+  group_by(Environment) %>% 
+  summarise(pred = mean(Predictive_Capacity), sd = sd(Predictive_Capacity), .groups = "drop")
+
+writexl::write_xlsx(df_metrics, "BSL_CV0_Oil.xlsx")
+```
+
+# Gaussian
+
+```{r}
+load("EZ.rda")
+load("GDec_gauss.rda")
+```
+
+## CV1
+
+```{r}
+folds  <- 1:5
+```
+
+### Yield
+
+```{r}
+yield <- Y$yield
+env <- Y$environ
+uenv <- unique(env)
+
+set.seed(1)
+
+ETA <- list(
+  list(X = EZ, model = "FIXED"),
+  list(V = GDec$vectors, d = GDec$values, model = "RKHS")
+)
+
+list_metrics <- list()
+
+for (fold in folds) {
+  
+  cat("  Processing Fold", fold, "\n")
+  
+  testing <- which(Y$CV1 == fold)
+
+  yNA <- yield
+  yNA[testing] <- NA
+  
+  fm <- BGLR(
+    y = yNA,
+    ETA = ETA,
+    nIter = nIter,
+    burnIn = burnIn,
+    verbose = FALSE
+  )
+  
+  yHat <- fm$yHat
+  
+  for (a in uenv) {
+    
+    idx_env  <- which(env == a)
+    join <- intersect(idx_env, testing)
+    
+    if (length(join) > 1) {
+      
+      cor_val <- cor(yHat[join], yield[join])
+      
+      list_metrics[[length(list_metrics) + 1]] <-
+        data.frame(
+          Fold = fold,
+          Environment = a,
+          Predictive_Capacity = cor_val
+        )
+    }
+  }
+}
+
+df_metricas <- do.call(rbind, list_metrics)
+
+df_metrics <- bind_rows(list_metrics) %>% 
+  group_by(Environment) %>% 
+  summarise(pred = mean(Predictive_Capacity), sd = sd(Predictive_Capacity), .groups = "drop")
+
+writexl::write_xlsx(df_metrics, "GAUSS_CV1_Yield.xlsx")
+```
+
+### Protein
+
+```{r}
+protein <- Y$protein
+env <- Y$environ
+uenv <- unique(env)
+
+set.seed(1)
+
+ETA <- list(
+  list(X = EZ, model = "FIXED"),
+  list(V = GDec$vectors, d = GDec$values, model = "RKHS")
+)
+
+list_metrics <- list()
+
+for (fold in folds) {
+  
+  cat("  Processing Fold", fold, "\n")
+  
+  testing <- which(Y$CV1 == fold)
+
+  yNA <- protein
+  yNA[testing] <- NA
+  
+  fm <- BGLR(
+    y = yNA,
+    ETA = ETA,
+    nIter = nIter,
+    burnIn = burnIn,
+    verbose = FALSE
+  )
+  
+  yHat <- fm$yHat
+  
+  for (a in uenv) {
+    
+    idx_env  <- which(env == a)
+    join <- intersect(idx_env, testing)
+    
+    if (length(join) > 1) {
+      
+      cor_val <- cor(yHat[join], protein[join])
+      
+      list_metrics[[length(list_metrics) + 1]] <-
+        data.frame(
+          Fold = fold,
+          Environment = a,
+          Predictive_Capacity = cor_val
+        )
+    }
+  }
+}
+
+df_metricas <- do.call(rbind, list_metrics)
+
+df_metrics <- bind_rows(list_metrics) %>% 
+  group_by(Environment) %>% 
+  summarise(pred = mean(Predictive_Capacity), sd = sd(Predictive_Capacity), .groups = "drop")
+
+writexl::write_xlsx(df_metrics, "GAUSS_CV1_Protein.xlsx")
+```
+
+### Oil
+
+```{r}
+oil <- Y$oil
+env <- Y$environ
+uenv <- unique(env)
+
+set.seed(1)
+
+ETA <- list(
+  list(X = EZ, model = "FIXED"),
+  list(V = GDec$vectors, d = GDec$values, model = "RKHS")
+)
+
+list_metrics <- list()
+
+for (fold in folds) {
+  
+  cat("  Processing Fold", fold, "\n")
+  
+  testing <- which(Y$CV1 == fold)
+
+  yNA <- oil
+  yNA[testing] <- NA
+  
+  fm <- BGLR(
+    y = yNA,
+    ETA = ETA,
+    nIter = nIter,
+    burnIn = burnIn,
+    verbose = FALSE
+  )
+  
+  yHat <- fm$yHat
+  
+  for (a in uenv) {
+    
+    idx_env  <- which(env == a)
+    join <- intersect(idx_env, testing)
+    
+    if (length(join) > 1) {
+      
+      cor_val <- cor(yHat[join], oil[join])
+      
+      list_metrics[[length(list_metrics) + 1]] <-
+        data.frame(
+          Fold = fold,
+          Environment = a,
+          Predictive_Capacity = cor_val
+        )
+    }
+  }
+}
+
+df_metricas <- do.call(rbind, list_metrics)
+
+df_metrics <- bind_rows(list_metrics) %>% 
+  group_by(Environment) %>% 
+  summarise(pred = mean(Predictive_Capacity), sd = sd(Predictive_Capacity), .groups = "drop")
+
+writexl::write_xlsx(df_metrics, "GAUSS_CV1_Oil.xlsx")
+```
+
+## CV2
+
+```{r}
+folds  <- 1:5
+```
+
+### Yield
+
+```{r}
+yield <- Y$yield
+env <- Y$environ
+uenv <- unique(env)
+
+set.seed(1)
+
+ETA <- list(
+  list(X = EZ, model = "FIXED"),
+  list(V = GDec$vectors, d = GDec$values, model = "RKHS")
+)
+
+list_metrics <- list()
+
+for (fold in folds) {
+  
+  cat("  Processing Fold", fold, "\n")
+  
+  testing <- which(Y$CV2 == fold)
+
+  yNA <- yield
+  yNA[testing] <- NA
+  
+  fm <- BGLR(
+    y = yNA,
+    ETA = ETA,
+    nIter = nIter,
+    burnIn = burnIn,
+    verbose = FALSE
+  )
+  
+  yHat <- fm$yHat
+  
+  for (a in uenv) {
+    
+    idx_env  <- which(env == a)
+    join <- intersect(idx_env, testing)
+    
+    if (length(join) > 1) {
+      
+      cor_val <- cor(yHat[join], yield[join])
+      
+      list_metrics[[length(list_metrics) + 1]] <-
+        data.frame(
+          Fold = fold,
+          Environment = a,
+          Predictive_Capacity = cor_val
+        )
+    }
+  }
+}
+
+df_metricas <- do.call(rbind, list_metrics)
+
+df_metrics <- bind_rows(list_metrics) %>% 
+  group_by(Environment) %>% 
+  summarise(pred = mean(Predictive_Capacity), sd = sd(Predictive_Capacity), .groups = "drop")
+
+writexl::write_xlsx(df_metrics, "GAUSS_CV2_Yield.xlsx")
+```
+
+### Protein
+
+```{r}
+protein <- Y$protein
+env <- Y$environ
+uenv <- unique(env)
+
+set.seed(1)
+
+ETA <- list(
+  list(X = EZ, model = "FIXED"),
+  list(V = GDec$vectors, d = GDec$values, model = "RKHS")
+)
+
+list_metrics <- list()
+
+for (fold in folds) {
+  
+  cat("  Processing Fold", fold, "\n")
+  
+  testing <- which(Y$CV2 == fold)
+
+  yNA <- protein
+  yNA[testing] <- NA
+  
+  fm <- BGLR(
+    y = yNA,
+    ETA = ETA,
+    nIter = nIter,
+    burnIn = burnIn,
+    verbose = FALSE
+  )
+  
+  yHat <- fm$yHat
+  
+  for (a in uenv) {
+    
+    idx_env  <- which(env == a)
+    join <- intersect(idx_env, testing)
+    
+    if (length(join) > 1) {
+      
+      cor_val <- cor(yHat[join], protein[join])
+      
+      list_metrics[[length(list_metrics) + 1]] <-
+        data.frame(
+          Fold = fold,
+          Environment = a,
+          Predictive_Capacity = cor_val
+        )
+    }
+  }
+}
+
+df_metricas <- do.call(rbind, list_metrics)
+
+df_metrics <- bind_rows(list_metrics) %>% 
+  group_by(Environment) %>% 
+  summarise(pred = mean(Predictive_Capacity), sd = sd(Predictive_Capacity), .groups = "drop")
+
+writexl::write_xlsx(df_metrics, "GAUSS_CV2_Protein.xlsx")
+```
+
+### Oil
+
+```{r}
+oil <- Y$oil
+env <- Y$environ
+uenv <- unique(env)
+
+set.seed(1)
+
+ETA <- list(
+  list(X = EZ, model = "FIXED"),
+  list(V = GDec$vectors, d = GDec$values, model = "RKHS")
+)
+
+list_metrics <- list()
+
+for (fold in folds) {
+  
+  cat("  Processing Fold", fold, "\n")
+  
+  testing <- which(Y$CV2 == fold)
+
+  yNA <- oil
+  yNA[testing] <- NA
+  
+  fm <- BGLR(
+    y = yNA,
+    ETA = ETA,
+    nIter = nIter,
+    burnIn = burnIn,
+    verbose = FALSE
+  )
+  
+  yHat <- fm$yHat
+  
+  for (a in uenv) {
+    
+    idx_env  <- which(env == a)
+    join <- intersect(idx_env, testing)
+    
+    if (length(join) > 1) {
+      
+      cor_val <- cor(yHat[join], oil[join])
+      
+      list_metrics[[length(list_metrics) + 1]] <-
+        data.frame(
+          Fold = fold,
+          Environment = a,
+          Predictive_Capacity = cor_val
+        )
+    }
+  }
+}
+
+df_metricas <- do.call(rbind, list_metrics)
+
+df_metrics <- bind_rows(list_metrics) %>% 
+  group_by(Environment) %>% 
+  summarise(pred = mean(Predictive_Capacity), sd = sd(Predictive_Capacity), .groups = "drop")
+
+writexl::write_xlsx(df_metrics, "GAUSS_CV2_Oil.xlsx")
+```
+
+## CV0
+
+```{r}
+folds  <- 1:6
+```
+
+### Yield
+
+```{r}
+yield <- Y$yield
+env <- Y$environ
+uenv <- unique(env)
+
+set.seed(1)
+
+ETA <- list(
+  list(X = EZ, model = "FIXED"),
+  list(V = GDec$vectors, d = GDec$values, model = "RKHS")
+)
+
+list_metrics <- list()
+
+for (fold in folds) {
+  
+  cat("  Processing Fold", fold, "\n")
+  
+  testing <- which(Y$CV0 == fold)
+
+  yNA <- yield
+  yNA[testing] <- NA
+  
+  fm <- BGLR(
+    y = yNA,
+    ETA = ETA,
+    nIter = nIter,
+    burnIn = burnIn,
+    verbose = FALSE
+  )
+  
+  yHat <- fm$yHat
+  
+  for (a in uenv) {
+    
+    idx_env  <- which(env == a)
+    join <- intersect(idx_env, testing)
+    
+    if (length(join) > 1) {
+      
+      cor_val <- cor(yHat[join], yield[join])
+      
+      list_metrics[[length(list_metrics) + 1]] <-
+        data.frame(
+          Fold = fold,
+          Environment = a,
+          Predictive_Capacity = cor_val
+        )
+    }
+  }
+}
+
+df_metricas <- do.call(rbind, list_metrics)
+
+df_metrics <- bind_rows(list_metrics) %>% 
+  group_by(Environment) %>% 
+  summarise(pred = mean(Predictive_Capacity), sd = sd(Predictive_Capacity), .groups = "drop")
+
+writexl::write_xlsx(df_metrics, "GAUSS_CV0_Yield.xlsx")
+```
+
+### Protein
+
+```{r}
+protein <- Y$protein
+env <- Y$environ
+uenv <- unique(env)
+
+set.seed(1)
+
+ETA <- list(
+  list(X = EZ, model = "FIXED"),
+  list(V = GDec$vectors, d = GDec$values, model = "RKHS")
+)
+
+list_metrics <- list()
+
+for (fold in folds) {
+  
+  cat("  Processing Fold", fold, "\n")
+  
+  testing <- which(Y$CV0 == fold)
+
+  yNA <- protein
+  yNA[testing] <- NA
+  
+  fm <- BGLR(
+    y = yNA,
+    ETA = ETA,
+    nIter = nIter,
+    burnIn = burnIn,
+    verbose = FALSE
+  )
+  
+  yHat <- fm$yHat
+  
+  for (a in uenv) {
+    
+    idx_env  <- which(env == a)
+    join <- intersect(idx_env, testing)
+    
+    if (length(join) > 1) {
+      
+      cor_val <- cor(yHat[join], protein[join])
+      
+      list_metrics[[length(list_metrics) + 1]] <-
+        data.frame(
+          Fold = fold,
+          Environment = a,
+          Predictive_Capacity = cor_val
+        )
+    }
+  }
+}
+
+df_metricas <- do.call(rbind, list_metrics)
+
+df_metrics <- bind_rows(list_metrics) %>% 
+  group_by(Environment) %>% 
+  summarise(pred = mean(Predictive_Capacity), sd = sd(Predictive_Capacity), .groups = "drop")
+
+writexl::write_xlsx(df_metrics, "GAUSS_CV0_Protein.xlsx")
+```
+
+### Oil
+
+```{r}
+oil <- Y$oil
+env <- Y$environ
+uenv <- unique(env)
+
+set.seed(1)
+
+ETA <- list(
+  list(X = EZ, model = "FIXED"),
+  list(V = GDec$vectors, d = GDec$values, model = "RKHS")
+)
+
+list_metrics <- list()
+
+for (fold in folds) {
+  
+  cat("  Processing Fold", fold, "\n")
+  
+  testing <- which(Y$CV0 == fold)
+
+  yNA <- oil
+  yNA[testing] <- NA
+  
+  fm <- BGLR(
+    y = yNA,
+    ETA = ETA,
+    nIter = nIter,
+    burnIn = burnIn,
+    verbose = FALSE
+  )
+  
+  yHat <- fm$yHat
+  
+  for (a in uenv) {
+    
+    idx_env  <- which(env == a)
+    join <- intersect(idx_env, testing)
+    
+    if (length(join) > 1) {
+      
+      cor_val <- cor(yHat[join], oil[join])
+      
+      list_metrics[[length(list_metrics) + 1]] <-
+        data.frame(
+          Fold = fold,
+          Environment = a,
+          Predictive_Capacity = cor_val
+        )
+    }
+  }
+}
+
+df_metricas <- do.call(rbind, list_metrics)
+
+df_metrics <- bind_rows(list_metrics) %>% 
+  group_by(Environment) %>% 
+  summarise(pred = mean(Predictive_Capacity), sd = sd(Predictive_Capacity), .groups = "drop")
+
+writexl::write_xlsx(df_metrics, "GAUSS_CV0_Oil.xlsx")
+```
