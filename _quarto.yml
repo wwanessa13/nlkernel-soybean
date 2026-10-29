@@ -2,22 +2,27 @@ project:
   type: website
   output-dir: docs
 
+
 website:
   title: "Soybean Traits Prediction"
   sidebar:
     contents:
-      - index.qmd
-      - Data Preparation.qmd
-      - Hyperparameter Tuning.qmd
-      - Variance Components.qmd
-      - text: Models
-        menu:
-          - href: Main model.qmd
-            text: Main effects
-          - href: Interaction model.qmd
-            text: Main and Interaction effects
-      - RF.qmd
-      - Additional Dataset.qmd
+      - href: index.qmd
+        text: Home
+      - href: "Data Preparation.qmd"
+        text: Data Preparation
+      - href: "Hyperparameter Tuning.qmd"
+        text: Hyperparameter Tuning
+      - href: "Variance Components.qmd"
+        text: Variance Components
+      - href: "Main model.qmd"
+        text: Main model
+      - href: "Interaction model.qmd"
+        text: Interaction model
+      - href: RF.qmd
+        text: Random Forest
+      - href: "Additional Dataset.qmd"
+        text: Additional Dataset
 
 format:
   html:
